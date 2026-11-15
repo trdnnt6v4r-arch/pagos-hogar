@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Pagos del hogar</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pagos">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f1f3f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111315" media="(prefers-color-scheme: dark)">
+<meta name="referrer" content="no-referrer">
+<link rel="apple-touch-icon" href="icono-180.png">
+<link rel="icon" type="image/png" href="icono-180.png">
+<script>window.API_URL = "https://script.google.com/macros/s/AKfycbwdA_jImtbZemI-nr6gVv41ESqUG6a01zXR8oXqfUlDeezTDZzYdJG5kAfhZ8dKxLOn/exec";</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --papel:#f1f3f5; --papel2:#e7eaee; --hoja:#ffffff; --tinta:#141414; --tinta2:#5d636b; --tinta3:#666c74;
+  --linea:#e3e6ea; --linea2:#eef0f3; --borde:#c6cbd2;
+  --acento:#f25f1c; --acento-txt:#c2410c; --acento-suave:#fdeee6;
+  --primario:#141414; --primario-texto:#ffffff;
+  --sello:#b42d24; --sello-suave:#fdeceb; --ambar:#8a5a00; --ambar-suave:#fdf2db; --verde:#16794f; --verde-suave:#e3f3ea;
+  --sombra:0 1px 2px rgba(20,20,20,.04),0 4px 16px rgba(20,20,20,.05);
+  --r:20px;
+  --titulo:"Figtree",system-ui,sans-serif; --sans:"Figtree",system-ui,sans-serif; --marca:"Figtree",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --papel:#111315; --papel2:#202428; --hoja:#1a1d20; --tinta:#f1f2f3; --tinta2:#a9afb6; --tinta3:#9aa0a7;
+    --linea:#2a2f34; --linea2:#23272b; --borde:#4a5158;
+    --acento:#ff7a3d; --acento-txt:#ff8a4c; --acento-suave:#3a2216;
+    --primario:#f1f2f3; --primario-texto:#141414;
+    --sello:#ff7a6e; --sello-suave:#3a1d1b; --ambar:#f0c060; --ambar-suave:#352a12; --verde:#5fd39a; --verde-suave:#16301f;
+    --sombra:0 1px 2px rgba(0,0,0,.3);
+  }
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--papel);color:var(--tinta);font:15px/1.45 var(--sans);padding-bottom:calc(84px + env(safe-area-inset-bottom));-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--titulo);font-weight:700;letter-spacing:-.025em;margin:0}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600}
+.gs{font-size:max(.8em,12px);font-weight:500;margin-right:.25em;color:var(--tinta2)}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--acento-txt);font-weight:600}
+
+/* Cabecera */
+.cab{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--papel) 92%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:calc(10px + env(safe-area-inset-top)) 20px 8px}
+.cab-fila{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:720px;margin:0 auto}
+.cab h1{font:700 19px/1.2 var(--titulo);letter-spacing:-.01em}
+.cab .sub{display:none}
+.cab-der{display:flex;gap:8px;align-items:center}
+.yo{width:44px;height:44px;border-radius:50%;background:var(--papel2);color:var(--tinta);display:grid;place-items:center;font:700 15px var(--titulo)}
+.btn-icono{background:var(--hoja);border:0;box-shadow:var(--sombra);border-radius:14px;min-height:44px;min-width:44px;padding:0 12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn-icono svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8}
+#carga{height:2px;background:var(--acento);width:0;opacity:0;transition:width .4s,opacity .2s;position:absolute;left:0;bottom:0}
+#carga.on{width:70%;opacity:1}
+
+main{max-width:720px;margin:0 auto;padding:0 20px}
+.pagina{padding:6px 0 24px}
+.titulo-vista{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:8px 0 18px}
+.titulo-vista h2{font-size:32px;line-height:1.08}
+.titulo-vista h2 .gris{display:block;color:var(--tinta3)}
+.titulo-vista .fecha{font-size:14px;color:var(--tinta2)}
+.seccion{display:flex;justify-content:space-between;align-items:baseline;margin:26px 0 12px;font:700 21px/1.2 var(--titulo);letter-spacing:-.02em}
+.seccion a,.seccion button{font:600 15px var(--sans);color:var(--acento-txt);background:none;border:0;padding:0;cursor:pointer}
+
+/* Resumen grande del inicio */
+.hero{background:var(--hoja);border-radius:var(--r);box-shadow:var(--sombra);padding:20px}
+.hero-et{color:var(--tinta2);font-size:14px}
+.hero-num{font:800 38px/1.1 var(--titulo);letter-spacing:-.035em;margin:4px 0 8px}
+.hero-num .gs{font-size:18px}
+.pastilla{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:4px 10px;font-size:13px;font-weight:600;background:var(--sello-suave);color:var(--sello)}
+.pastilla.ok{background:var(--verde-suave);color:var(--verde)}
+.barra{height:8px;background:var(--papel2);border-radius:99px;overflow:hidden;margin:14px 0}
+.barra i{display:block;height:100%;background:var(--acento);border-radius:99px}
+.hero-fila{display:flex;gap:28px}
+.hero-fila span{display:block;color:var(--tinta2);font-size:13px}
+.hero-fila b{font:700 18px var(--titulo)}
+
+/* Tarjetas de persona */
+.renglon{background:var(--hoja);border-radius:var(--r);box-shadow:var(--sombra);padding:18px;margin:0 0 14px;position:relative}
+.renglon.debe{box-shadow:var(--sombra),inset 0 0 0 2px var(--sello-suave)}
+.per-cab{display:flex;align-items:center;gap:12px}
+.av{width:46px;height:46px;flex:none;border-radius:50%;background:var(--c,#5d636b);color:#fff;display:grid;place-items:center;font:700 16px var(--titulo)}
+.per-cab h3{font-size:20px}
+.rol{color:var(--tinta2);font-size:14px}
+.prox{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:14px 0 4px;padding:12px 14px;border-radius:16px;background:var(--papel)}
+.prox b{font:700 20px var(--titulo)}
+.prox small{display:block;color:var(--tinta2);font-size:13px}
+.datos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0 14px}
+.datos>div{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px}
+.datos .ic{width:46px;height:46px;border-radius:14px;background:var(--papel);color:var(--acento-txt);display:grid;place-items:center}
+.datos .ic svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7}
+.datos dt{font-size:12.5px;color:var(--tinta2);order:3}
+.datos dd{margin:0;font-weight:600;font-size:14px;order:2}
+.datos dd .gs{display:none}
+.acciones{display:flex;gap:10px}
+.acciones{flex-wrap:wrap}
+.acciones .btn{flex:1 1 auto;padding:10px 14px;font-size:15px}
+.renglon .acciones{flex-wrap:nowrap}
+.renglon .acciones .btn{flex:1;padding:10px 12px;white-space:nowrap}
+.renglon .acciones .btn:first-child{flex:1.6}
+
+.btn{background:var(--primario);color:var(--primario-texto);border:0;border-radius:16px;padding:12px 18px;min-height:50px;cursor:pointer;font:700 16px var(--titulo);letter-spacing:-.01em;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+.btn.sec{background:var(--hoja);color:var(--tinta);box-shadow:inset 0 0 0 1.5px var(--borde)}
+.btn.peligro{background:var(--hoja);color:var(--sello);box-shadow:inset 0 0 0 1.5px var(--sello)}
+.btn.grande{width:100%;min-height:58px;font-size:18px}
+.btn:disabled{opacity:.5}
+.btn:focus-visible,.btn-icono:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.fila-pago:focus-visible,.chip:focus-visible{outline:2px solid var(--acento);outline-offset:2px}
+
+.tag{display:inline-block;font-size:12.5px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--sello-suave);color:var(--sello);vertical-align:2px}
+.tag.curso{background:var(--ambar-suave);color:var(--ambar)} .tag.ok{background:var(--verde-suave);color:var(--verde)}
+
+/* Avisos */
+.notas{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.notas li{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:16px;background:var(--hoja);box-shadow:var(--sombra);font-size:14.5px}
+.notas li::before{content:"";flex:none;width:10px;height:10px;border-radius:50%;margin-top:6px;background:var(--ambar)}
+.notas li.grave::before{background:var(--sello)}
+.notas li.info::before{background:var(--acento)}
+
+/* Chips y filtros */
+.filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.filtros select,.filtros input,.selector{flex:1 1 150px;min-width:0;border:0;background:var(--hoja);box-shadow:var(--sombra);border-radius:99px;padding:10px 36px 10px 16px;min-height:46px;font-size:15px;font-weight:600;-webkit-appearance:none;appearance:none}
+.selector{flex:none;width:auto}
+@media (max-width:420px){.filtros select,.filtros input{flex-basis:100%}}
+
+/* Lista de movimientos */
+.lista{background:var(--hoja);border-radius:var(--r);box-shadow:var(--sombra);padding:4px 16px}
+.fila-pago{display:grid;grid-template-columns:44px 1fr auto;gap:0 12px;align-items:center;padding:12px 0;border:0;border-bottom:1px solid var(--linea2);cursor:pointer;width:100%;text-align:left;background:none}
+.lista .fila-pago:last-child{border-bottom:0}
+.fila-pago .av{width:40px;height:40px;font-size:14px;grid-row:1/3}
+.fila-pago .q{font-weight:600}
+.fila-pago .t{font-size:13px;color:var(--tinta2);grid-column:2}
+.fila-pago .m{text-align:right;grid-row:1/3;grid-column:3;font-weight:700}
+.fila-pago .f{display:none}
+.fila-pago.anulado .q,.fila-pago.anulado .m{text-decoration:line-through;color:var(--tinta3)}
+.vacio{padding:36px 0;color:var(--tinta2)}
+.vacio h2{color:var(--tinta);font-size:24px;margin-bottom:6px}
+
+/* Tablas */
+.tabla{width:100%;border-collapse:collapse;font-size:14.5px}
+.tabla th{font:600 13px var(--sans);text-align:right;color:var(--tinta2);padding:10px 4px;border-bottom:1px solid var(--linea)}
+.tabla th:first-child,.tabla td:first-child{text-align:left}
+.tabla td{padding:11px 4px;border-bottom:1px solid var(--linea2);text-align:right}
+.tabla tfoot td{border-bottom:0;font-weight:700;font-size:16px}
+.desplaza{overflow-x:auto;background:var(--hoja);border-radius:var(--r);box-shadow:var(--sombra);padding:6px 16px}
+.nota-pie{font-size:13.5px;color:var(--tinta2);margin:10px 0}
+
+/* Ficha */
+.ficha dl{display:grid;grid-template-columns:auto 1fr;gap:12px 14px;margin:0;background:var(--hoja);border-radius:var(--r);box-shadow:var(--sombra);padding:16px 18px}
+.ficha dt{color:var(--tinta2);font-size:14.5px}
+.ficha dd{margin:0;text-align:right;font-weight:600}
+
+/* Barra de pestañas */
+.pestanas{position:fixed;left:0;right:0;bottom:0;background:var(--hoja);border-top:1px solid var(--linea);display:flex;justify-content:center;padding:4px 6px env(safe-area-inset-bottom);z-index:6}
+.pestanas button{flex:1;max-width:140px;background:none;border:0;padding:9px 2px 8px;font-size:12.5px;font-weight:500;color:var(--tinta3);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}
+.pestanas svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.7}
+.pestanas button[aria-current="page"]{color:var(--acento-txt);font-weight:700}
+
+/* Hojas (formularios) */
+dialog{border:0;padding:0;width:100%;max-width:560px;background:var(--papel);color:var(--tinta);max-height:94vh;margin:auto auto 0;border-radius:26px 26px 0 0}
+@media (min-width:600px){dialog{margin:auto;border-radius:26px}}
+dialog::backdrop{background:rgba(10,18,22,.45)}
+.dlg-cab{display:flex;align-items:center;gap:12px;padding:16px 20px 10px;position:sticky;top:0;background:var(--papel);z-index:1}
+.dlg-cab>div{flex:1;min-width:0}
+.dlg-cab h2{font-size:26px}
+.dlg-cab .rol{font-size:14px}
+.dlg-cab .btn-icono{order:-1;width:44px;padding:0;font-size:0}
+.dlg-cab .btn-icono::before{content:"";width:10px;height:10px;border-left:2.2px solid var(--tinta);border-bottom:2.2px solid var(--tinta);transform:rotate(45deg) translate(2px,-1px)}
+.dlg-cuerpo{padding:6px 20px 18px}
+.dlg-pie{display:flex;gap:10px;padding:12px 20px calc(16px + env(safe-area-inset-bottom));position:sticky;bottom:0;background:var(--papel)}
+.dlg-pie .btn{flex:1}
+.campo{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.campo label,.campo .etq{font-size:14px;color:var(--tinta2);font-weight:500}
+.campo input,.campo select,.campo textarea{background:var(--hoja);border:0;box-shadow:inset 0 0 0 1.5px var(--linea);border-radius:14px;padding:11px 14px;width:100%;min-height:50px;font-size:16px;-webkit-appearance:none;appearance:none}
+.campo input:focus,.campo select:focus,.campo textarea:focus{box-shadow:inset 0 0 0 2px var(--acento);outline:0}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--tinta2) 50%),linear-gradient(135deg,var(--tinta2) 50%,transparent 50%)!important;background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%!important;background-size:5px 5px!important;background-repeat:no-repeat!important;padding-right:34px!important}
+::placeholder{color:var(--tinta3);opacity:1}
+.campo .ayuda{font-size:13px;color:var(--tinta2)}
+.error,.campo .error{font-size:14px;color:var(--sello);font-weight:500}
+.doble{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;align-items:start}
+.doble>*{min-width:0}
+input[type=date]{min-width:0;max-width:100%;display:block;text-align:left}
+input[type=date]::-webkit-date-and-time-value{text-align:left}
+.check{display:flex;gap:12px;align-items:center;margin-bottom:14px;font-size:15px;min-height:48px;cursor:pointer}
+.check input{width:24px;height:24px;accent-color:var(--acento);flex:none}
+.resumen-pago{display:flex;align-items:center;gap:14px;background:var(--hoja);border-radius:20px;box-shadow:var(--sombra);padding:14px 16px;margin:4px 0 18px}
+.resumen-pago .av{width:52px;height:52px;font-size:17px;color:#fff}
+.prog{height:6px;background:var(--papel2);border-radius:99px;margin:14px 0 4px;overflow:hidden}.prog i{display:block;height:100%;background:var(--c,var(--acento));border-radius:99px}
+.prog-t{font-size:13px;color:var(--tinta2)}
+.fab{position:fixed;right:max(18px,calc(50% - 342px));bottom:calc(88px + env(safe-area-inset-bottom));width:60px;height:60px;border-radius:50%;border:0;background:var(--acento);color:#fff;z-index:7;cursor:pointer;display:grid;place-items:center;box-shadow:0 6px 18px rgba(242,95,28,.35)}
+.fab svg{width:28px;height:28px;stroke:#fff;stroke-width:2.6;fill:none}
+.fab:focus-visible{outline:2px solid var(--tinta);outline-offset:3px}
+.resumen-pago b{display:block;font:700 18px var(--titulo)}
+.resumen-pago span{color:var(--tinta2);font-size:14px}
+.subtitulo{font:700 19px var(--titulo);letter-spacing:-.02em;margin:18px 0 10px}
+.cuenta{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--linea);margin-top:8px;padding-top:14px}
+.cuenta span{font:700 18px var(--titulo)}
+.cuenta strong{font:800 22px var(--titulo)}
+.garantia{display:flex;justify-content:center;gap:6px;color:var(--acento-txt);font-weight:600;font-size:14px;margin:4px 0 0}
+
+/* Recibo */
+.recibo{background:var(--hoja);border-radius:var(--r);box-shadow:var(--sombra);padding:20px;font-size:14.5px}
+.recibo h3{font-size:22px;margin-bottom:2px}
+.recibo .linea-r{display:flex;justify-content:space-between;padding:8px 0;gap:10px;color:var(--tinta2)}
+.recibo .linea-r .num{color:var(--tinta)}
+.recibo .letras{font-style:italic;margin:10px 0;color:var(--tinta2)}
+.recibo .medio{font-weight:600;color:var(--tinta)}
+.firmas{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:46px;font-size:13.5px;color:var(--tinta2)}
+.firmas div{border-top:1px solid var(--borde);padding-top:6px}
+details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:700}
+#pregunta{border-radius:24px;max-width:420px;margin:auto}
+#pregunta .dlg-cuerpo{padding-top:22px}
+#pregunta .dlg-cuerpo p{font-size:16px;margin:0}
+
+#aviso{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom));background:var(--tinta);color:var(--papel);padding:12px 16px;border-radius:14px;font-size:14.5px;font-weight:500;max-width:min(92vw,520px);opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+#aviso.on{opacity:1}
+#aviso.error{background:var(--sello);color:#fff}
+.demo{background:var(--ambar-suave);color:var(--ambar);font-size:13px;padding:8px 16px;text-align:center}
+
+@media print{
+  body{background:#fff;color:#000;padding:0}
+  .cab,.pestanas,main,.dlg-cab,.dlg-pie,.no-imprimir,#aviso,.demo{display:none!important}
+  dialog{position:static;max-height:none;max-width:none;background:#fff}
+  .recibo{box-shadow:none;border:1px solid #000;background:#fff;color:#000}
+}
+</style>
+</head>
+<body>
+<div id="demo" class="demo" hidden>Modo demostración con datos ficticios: nada de esto se guarda en Google.</div>
+<header class="cab">
+  <div class="cab-fila">
+    <h1 id="titulo">Pagos del hogar</h1>
+    <div class="cab-der">
+      <button class="btn-icono" id="recargar" title="Traer los cambios de la otra persona" aria-label="Actualizar"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg></button>
+      <span class="yo" id="yo" aria-hidden="true"></span>
+    </div>
+  </div>
+  <div class="sub"><span id="hogar"></span><span id="usuario"></span></div>
+  <div id="carga"></div>
+</header>
+<main id="vista" aria-live="polite"></main>
+<nav class="pestanas" aria-label="Secciones">
+  <button data-vista="inicio"><svg viewBox="0 0 24 24"><path d="M4 11l8-6 8 6v8H4z"/><path d="M10 19v-5h4v5"/></svg>Inicio</button>
+  <button data-vista="pagos"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Pagos</button>
+  <button data-vista="personas"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-5.5 7-5.5s6 1.5 7 5.5"/></svg>Personas</button>
+  <button data-vista="resumen"><svg viewBox="0 0 24 24"><path d="M4 20V4M4 20h16"/><path d="M8 16v-4M12 16V8M16 16v-6"/></svg>Resumen</button>
+  <button data-vista="ajustes"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Ajustes</button>
+</nav>
+<button class="fab" data-accion="nuevoPago" aria-label="Registrar un pago" title="Registrar un pago"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+<dialog id="hoja" aria-labelledby="hoja-titulo"></dialog>
+<div id="aviso" role="status"></div>
+
+<script>
+/*CALC-INICIO*/
+/* Cálculos de Pagos del hogar. Sin dependencias: se incrusta en Index.html y se prueba con Node.
+   Fechas siempre como texto 'AAAA-MM-DD'. Montos en guaraníes enteros. */
+const Calc = (() => {
+  const REMUNERATIVOS = ['sueldo', 'extra', 'vacaciones'];
+  const TIPOS = {
+    sueldo: 'Sueldo', adelanto: 'Adelanto', extra: 'Horas extra o feriado', vacaciones: 'Vacaciones',
+    aguinaldo: 'Aguinaldo', bonificacion: 'Bonificación familiar', liquidacion: 'Liquidación', otro: 'Otro'
+  };
+  const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  const MESES_LARGOS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto',
+    'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+  // ---------- fechas ----------
+  const D = s => { const [y, m, d] = s.split('-').map(Number); return new Date(Date.UTC(y, m - 1, d)); };
+  const S = dt => dt.toISOString().slice(0, 10);
+  const sumarDias = (s, n) => { const d = D(s); d.setUTCDate(d.getUTCDate() + n); return S(d); };
+  const diasDelMes = (y, m) => new Date(Date.UTC(y, m, 0)).getUTCDate(); // m de 1 a 12
+  const diasEntre = (a, b) => Math.round((D(b) - D(a)) / 864e5);
+  const hoy = () => { const d = new Date(); return S(new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()))); };
+  const max = (a, b) => (a > b ? a : b);
+  const min = (a, b) => (a < b ? a : b);
+
+  /** Antigüedad entre dos fechas, contando el último día como trabajado. */
+  function antiguedad(ingreso, salida) {
+    const fin = sumarDias(salida, 1);
+    // Meses completos: el mayor k tal que ingreso + k meses (con el día ajustado a fin de mes) no pasa de fin.
+    let k = Math.max(0, (Number(fin.slice(0, 4)) - Number(ingreso.slice(0, 4))) * 12 + Number(fin.slice(5, 7)) - Number(ingreso.slice(5, 7)) + 1);
+    while (k > 0 && sumarMeses(ingreso, k) > fin) k--;
+    const dias = Math.max(0, diasEntre(sumarMeses(ingreso, k), fin));
+    return { anios: Math.floor(k / 12), meses: k % 12, dias, totalDias: diasEntre(ingreso, salida) + 1 };
+  }
+  const masDe = (an, n) => an.anios > n || (an.anios === n && (an.meses > 0 || an.dias > 0));
+
+  // ---------- reglas legales ----------
+  /** Días de vacaciones del año de servicio número n (art. 218 CT). */
+  const vacacionesDelAnio = n => (n <= 5 ? 12 : n <= 10 ? 18 : 30);
+
+  function vacacionesGanadas(ingreso, hasta) {
+    const anios = antiguedad(ingreso, hasta).anios;
+    let total = 0;
+    for (let n = 1; n <= anios; n++) total += vacacionesDelAnio(n);
+    return total;
+  }
+
+  /** Días de preaviso (art. 87 CT). 0 dentro del período de prueba de 30 días. */
+  function preavisoDias(ingreso, salida) {
+    const an = antiguedad(ingreso, salida);
+    if (an.totalDias <= 30) return 0;
+    if (!masDe(an, 1)) return 30;
+    if (!masDe(an, 5)) return 45;
+    // Art. 87: «más de diez años» = 90. Así lo aplica también la calculadora oficial del MTESS
+    // (con 10 años justos da 60); el folleto dice «10 años o más», pero se sigue la ley y la calculadora.
+    if (!masDe(an, 10)) return 60;
+    return 90;
+  }
+
+  /** Años que cuentan para la indemnización: completos más la fracción superior a 6 meses (art. 91 CT). */
+  function aniosIndemnizables(ingreso, salida) {
+    const an = antiguedad(ingreso, salida);
+    return an.anios + (an.meses > 6 || (an.meses === 6 && an.dias > 0) ? 1 : 0);
+  }
+
+  /**
+   * Sueldo mínimo para la jornada de la persona. Tiempo parcial: hora mínima × horas por semana × 4.
+   * La hora la fija el MTESS cada año (Res. 670/2026, art. 2: Gs. 14.635); si no está cargada, mínimo ÷ 208 truncado.
+   */
+  function minimoPersona(persona, cfg) {
+    if (persona.jornada !== 'parcial') return cfg.salarioMinimo;
+    const hora = Number(cfg.horaTiempoParcial) || Math.floor(cfg.salarioMinimo / 208);
+    return hora * (persona.horasSemana || 0) * 4;
+  }
+
+  const bonificacionFamiliar = (persona, cfg) =>
+    Math.round((persona.hijosMenores || 0) * cfg.bonifFamiliar * minimoPersona(persona, cfg));
+
+  // ---------- pagos ----------
+  const vigentes = (pagos, pid) => pagos.filter(p => !p.anulado && p.personaId === pid);
+  const ref = p => p.periodoHasta || p.fecha;
+  const suma = (lista, campo) => lista.reduce((s, p) => s + (Number(p[campo]) || 0), 0);
+
+  function remuneradoEntre(pagos, pid, desde, hasta) {
+    return suma(vigentes(pagos, pid).filter(p => REMUNERATIVOS.includes(p.tipo) && ref(p) >= desde && ref(p) <= hasta), 'monto');
+  }
+
+  function aguinaldo(pagos, pid, anio) {
+    const base = remuneradoEntre(pagos, pid, anio + '-01-01', anio + '-12-31');
+    const devengado = Math.round(base / 12);
+    const pagado = suma(vigentes(pagos, pid).filter(p => p.tipo === 'aguinaldo' && ref(p).slice(0, 4) === String(anio)), 'monto');
+    // La liquidación final ya incluye el aguinaldo proporcional del año: no queda nada pendiente.
+    const enLiquidacion = vigentes(pagos, pid).some(p => p.tipo === 'liquidacion' && ref(p).slice(0, 4) === String(anio));
+    return { base, devengado, pagado, enLiquidacion, pendiente: enLiquidacion ? 0 : Math.max(0, devengado - pagado) };
+  }
+
+  function saldoAdelantos(pagos, pid) {
+    const v = vigentes(pagos, pid);
+    return suma(v.filter(p => p.tipo === 'adelanto'), 'monto') - suma(v, 'adelantoDescontado');
+  }
+
+  /**
+   * Vacaciones desde que se usa la app: los días pendientes declarados al empezar el control
+   * más los años de servicio que se cumplen después. Así no se reclaman años anteriores ya gozados.
+   */
+  function vacaciones(persona, pagos, hasta) {
+    const inicio = max(persona.controlDesde || persona.fechaIngreso, persona.fechaIngreso);
+    const a0 = inicio > persona.fechaIngreso ? antiguedad(persona.fechaIngreso, sumarDias(inicio, -1)).anios : 0;
+    const a1 = hasta >= persona.fechaIngreso ? antiguedad(persona.fechaIngreso, hasta).anios : 0;
+    let nuevas = 0;
+    for (let n = a0 + 1; n <= a1; n++) nuevas += vacacionesDelAnio(n);
+    const iniciales = Number(persona.vacacionesIniciales) || 0;
+    const ganadas = iniciales + nuevas;
+    const tomadas = suma(vigentes(pagos, persona.id).filter(p => p.tipo === 'vacaciones' && ref(p) >= inicio), 'dias');
+    return { ganadas, iniciales, tomadas, pendientes: ganadas - tomadas };
+  }
+
+  /** Aportes al IPS de un mes ('AAAA-MM'), según lo registrado con período en ese mes. */
+  function ipsMes(persona, pagos, cfg, mes) {
+    const enMes = vigentes(pagos, persona.id).filter(p => ref(p).slice(0, 7) === mes);
+    const [yy, mm] = mes.split('-').map(Number);
+    const finMes = `${mes}-${diasDelMes(yy, mm)}`;
+    const sueldos = vigentes(pagos, persona.id).filter(p => p.tipo === 'sueldo');
+    const incompleto = !!persona.fechaIngreso && !!persona.frecuencia && periodos(persona, finMes)
+      .filter(per => per.hasta.slice(0, 7) === mes)
+      .some(per => sinCubrir(per, sueldos).length > 0);
+    // La liquidación guarda el IPS retenido sobre sueldo y vacaciones; de ahí se recupera su base.
+    const baseLiq = enMes.filter(p => p.tipo === 'liquidacion' && p.ipsTrabajador > 0)
+      .reduce((t, p) => t + Math.round(p.ipsTrabajador / cfg.ipsTrabajador), 0);
+    const base = suma(enMes.filter(p => REMUNERATIVOS.includes(p.tipo)), 'monto') + baseLiq;
+    const retenido = suma(enMes, 'ipsTrabajador');
+    if (!persona.ips || base === 0) return { base, obrero: 0, patronal: 0, complemento: 0, retenido, total: 0, incompleto };
+    // El complemento se calcula sobre el mes entero: con el mes a medias saldría inflado.
+    const comp = persona.jornada === 'parcial' && !incompleto ? cfg.ipsComplementoSalud * Math.max(0, cfg.salarioMinimo - base) : 0;
+    // El total se redondea una sola vez, como en la tabla del folleto MTESS (p. 7).
+    const total = Math.round(base * (cfg.ipsTrabajador + cfg.ipsEmpleador) + comp);
+    return {
+      base, obrero: Math.round(base * cfg.ipsTrabajador), patronal: Math.round(base * cfg.ipsEmpleador),
+      complemento: Math.round(comp), retenido, total, incompleto
+    };
+  }
+
+  // ---------- períodos de sueldo ----------
+  function periodoQueContiene(fecha, frecuencia) {
+    const [y, m, d] = fecha.split('-').map(Number);
+    const mm = String(m).padStart(2, '0');
+    const fin = diasDelMes(y, m);
+    if (frecuencia === 'mensual') return { desde: `${y}-${mm}-01`, hasta: `${y}-${mm}-${fin}` };
+    if (frecuencia === 'semanal') {
+      const dow = (D(fecha).getUTCDay() + 6) % 7; // lunes = 0
+      const desde = sumarDias(fecha, -dow);
+      return { desde, hasta: sumarDias(desde, 6) };
+    }
+    return d <= 15 ? { desde: `${y}-${mm}-01`, hasta: `${y}-${mm}-15` } : { desde: `${y}-${mm}-16`, hasta: `${y}-${mm}-${fin}` };
+  }
+
+  function montoCompleto(persona) {
+    const s = persona.sueldoMensual || 0;
+    if (persona.frecuencia === 'mensual') return s;
+    if (persona.frecuencia === 'semanal') return Math.round(s * 7 / 30);
+    return Math.round(s / 2);
+  }
+
+  /** Períodos de sueldo desde el inicio del control hasta la fecha dada (incluye el período en curso). */
+  function periodos(persona, hasta) {
+    if (persona.frecuencia === 'variable') return []; // pago por día u hora: sin períodos automáticos
+    const inicio = max(persona.controlDesde || persona.fechaIngreso, persona.fechaIngreso);
+    const tope = persona.fechaSalida ? min(persona.fechaSalida, hasta) : hasta;
+    const out = [];
+    let cursor = inicio;
+    while (cursor <= tope && out.length < 400) {
+      const p = periodoQueContiene(cursor, persona.frecuencia);
+      const desde = max(p.desde, inicio);
+      const hastaP = persona.fechaSalida ? min(p.hasta, persona.fechaSalida) : p.hasta;
+      const completos = persona.frecuencia === 'semanal' ? 7 : diasComerciales(p.desde, p.hasta);
+      const trabajados = persona.frecuencia === 'semanal' ? diasEntre(desde, hastaP) + 1 : diasComerciales(desde, hastaP);
+      const monto = trabajados === completos ? montoCompleto(persona) : Math.round(montoCompleto(persona) * trabajados / completos);
+      out.push({ desde, hasta: hastaP, monto, completo: trabajados === completos });
+      cursor = sumarDias(p.hasta, 1);
+    }
+    return out;
+  }
+
+  /** Cuarto día hábil (lunes a viernes; no descuenta feriados) después del fin de mes (art. 11 Ley 5407). */
+  function cuartoDiaHabil(finDeMes) {
+    let d = finDeMes, n = 0;
+    while (n < 4) { d = sumarDias(d, 1); const w = D(d).getUTCDay(); if (w !== 0 && w !== 6) n++; }
+    return d;
+  }
+
+  function vencimiento(persona, periodo) {
+    return persona.frecuencia === 'mensual' ? cuartoDiaHabil(periodo.hasta) : periodo.hasta;
+  }
+
+  /** Tramos de un período que ningún sueldo registrado cubre. Vacío si está pagado entero. */
+  function sinCubrir(per, sueldos) {
+    const rangos = sueldos.filter(p => p.periodoDesde <= per.hasta && p.periodoHasta >= per.desde)
+      .map(p => [max(p.periodoDesde, per.desde), min(p.periodoHasta, per.hasta)]).sort((a, b) => (a[0] < b[0] ? -1 : 1));
+    const huecos = [];
+    let cursor = per.desde;
+    rangos.forEach(([a, b]) => {
+      if (a > cursor) huecos.push([cursor, sumarDias(a, -1)]);
+      if (b >= cursor) cursor = sumarDias(b, 1);
+    });
+    if (cursor <= per.hasta) huecos.push([cursor, per.hasta]);
+    return huecos;
+  }
+
+  function estadoPersona(persona, pagos, fecha) {
+    const sueldos = vigentes(pagos, persona.id).filter(p => p.tipo === 'sueldo');
+    const pendientes = [];
+    periodos(persona, fecha).forEach(per => {
+      const huecos = sinCubrir(per, sueldos);
+      if (!huecos.length) return;
+      const vence = vencimiento(persona, per);
+      const base = { vence, atrasado: vence < fecha, enCurso: per.hasta >= fecha };
+      const parcial = huecos.length !== 1 || huecos[0][0] !== per.desde || huecos[0][1] !== per.hasta;
+      if (!parcial) { pendientes.push(Object.assign({}, per, base)); return; }
+      // Pago parcial: queda pendiente la parte no cubierta, proporcional a sus días.
+      const total = diasComerciales(per.desde, per.hasta);
+      huecos.forEach(([a, b]) => pendientes.push(Object.assign({}, base, {
+        desde: a, hasta: b, completo: false, parcial: true,
+        monto: Math.round(per.monto * diasComerciales(a, b) / Math.max(1, total))
+      })));
+    });
+    const ultimoPagado = sueldos.reduce((m, p) => max(m, p.periodoHasta || ''), '');
+    return { pendientes, proximo: pendientes[0] || null, ultimoPagado };
+  }
+
+  // ---------- liquidación ----------
+  function sumarMeses(s, n) {
+    const [y, m, d] = s.split('-').map(Number);
+    const t = new Date(Date.UTC(y, m - 1 + n, 1));
+    const dd = Math.min(d, diasDelMes(t.getUTCFullYear(), t.getUTCMonth() + 1));
+    return S(new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), dd)));
+  }
+
+  /**
+   * Días entre dos fechas inclusive contando cada mes como de 30 días, como se paga el sueldo mensual:
+   * una quincena siempre vale 15 (16 al 31 de octubre = 15; 1 al 28 de febrero = 30).
+   */
+  function diasComerciales(desde, hasta) {
+    let total = 0, c = desde;
+    while (c <= hasta) {
+      const [y, m, d] = c.split('-').map(Number);
+      const ultimo = diasDelMes(y, m);
+      const finMes = `${y}-${String(m).padStart(2, '0')}-${ultimo}`;
+      const f = min(finMes, hasta);
+      const d2 = f === finMes ? 30 : Math.min(Number(f.slice(8)), 30);
+      total += Math.max(0, d2 - Math.min(d, 30) + 1);
+      c = sumarDias(f, 1);
+    }
+    return total;
+  }
+  const mesesEntre = (desde, hasta) => diasComerciales(desde, hasta) / 30;
+
+  /**
+   * Promedio de lo devengado en los últimos seis meses (art. 92 b CT), ÷ 30.
+   * La ventana termina en el último sueldo registrado y no empieza antes del inicio del control,
+   * para no promediar meses sin registros como si fueran meses sin cobro.
+   */
+  function jornalPromedio(persona, pagos, salida) {
+    const ultimo = vigentes(pagos, persona.id).filter(p => p.tipo === 'sueldo' && p.periodoHasta <= salida)
+      .reduce((m, p) => max(m, p.periodoHasta), '');
+    const hasta = ultimo || salida;
+    const inicio = max(persona.controlDesde || persona.fechaIngreso, persona.fechaIngreso);
+    const desde = max(sumarMeses(sumarDias(hasta, 1), -6), inicio);
+    const total = desde <= hasta ? remuneradoEntre(pagos, persona.id, desde, hasta) : 0;
+    const ventana = desde <= hasta ? mesesEntre(desde, hasta) : 0;
+    // Meses realmente cubiertos por sueldos registrados: los huecos no cuentan como meses sin cobro.
+    const cubiertos = vigentes(pagos, persona.id).filter(p => p.tipo === 'sueldo' && p.periodoHasta >= desde && p.periodoDesde <= hasta)
+      .reduce((t, p) => t + mesesEntre(max(p.periodoDesde, desde), min(p.periodoHasta, hasta)), 0);
+    const meses = Math.min(ventana, cubiertos);
+    const conRegistros = total > 0 && meses > 0;
+    const promedioMensual = conRegistros ? total / meses : persona.sueldoMensual;
+    return {
+      jornal: Math.round(promedioMensual / 30), promedioMensual: Math.round(promedioMensual), conRegistros, desde, hasta,
+      huecos: conRegistros && cubiertos < ventana - 0.01
+    };
+  }
+
+  /**
+   * Simula la liquidación final.
+   * opciones: { fechaSalida, motivo: 'despido' | 'justificado' | 'renuncia', preavisoOtorgado, diasPendientes, descontarAdelantos }
+   */
+  function liquidar(persona, pagos, cfg, op) {
+    const salida = op.fechaSalida;
+    const an = antiguedad(persona.fechaIngreso, salida);
+    const enPrueba = an.totalDias <= 30;
+    const motivo = enPrueba ? 'prueba' : op.motivo;
+    const jp0 = jornalPromedio(persona, pagos, op.fechaSalida);
+    // Trabajador con sueldo mensual: salario diario = sueldo ÷ 30 (Res. MTESS 670/2026, art. 1), que es también
+    // lo que usa la calculadora de liquidación del MTESS para sueldo pendiente y vacaciones.
+    const jornalSueldo = persona.sueldoMensual ? Math.round(persona.sueldoMensual / 30) : jp0.jornal;
+    const jornalVac = jornalSueldo;
+    const jp = jornalPromedio(persona, pagos, salida);
+    const items = [];
+    const add = (concepto, monto, detalle, ips) => items.push({ concepto, monto: Math.round(monto), detalle, ips: !!ips });
+
+    const diasPend = Math.max(0, op.diasPendientes || 0);
+    const salarioPend = jornalSueldo * diasPend;
+    if (diasPend) add('Sueldo por días trabajados sin pagar', salarioPend, `${diasPend} días × ${miles(jornalSueldo)}`, true);
+
+    const anio = salida.slice(0, 4);
+    const ag = aguinaldo(pagos, persona.id, anio);
+    const posAguinaldo = items.length;
+
+    const vac = vacaciones(persona, pagos, salida);
+    if (!enPrueba && vac.pendientes > 0) {
+      add('Vacaciones ganadas y no tomadas', vac.pendientes * jornalVac, `${vac.pendientes} días × ${miles(jornalVac)} (sueldo ÷ 30)`, true);
+    }
+    if (motivo === 'despido') {
+      // Como la calculadora del MTESS: por cada mes completo del año en curso, 1 día (1,5 desde 5 años, 2,5 desde 10).
+      const diasAnioActual = vacacionesDelAnio(an.anios + 1);
+      const dias = diasAnioActual / 12 * an.meses;
+      if (dias > 0) add('Vacaciones proporcionales', dias * jornalVac, `${String(diasAnioActual / 12).replace('.', ',')} día(s) por mes × ${an.meses} meses × ${miles(jornalVac)}`, true);
+    }
+    // Aguinaldo: doceava parte de lo devengado en el año, incluido lo que esta liquidación paga como sueldo y vacaciones.
+    const extraAg = items.filter(i => i.ips).reduce((t, i) => t + i.monto, 0);
+    const agProp = Math.max(0, Math.round((ag.base + extraAg) / 12) - ag.pagado);
+    items.splice(posAguinaldo, 0, { concepto: 'Aguinaldo proporcional ' + anio, monto: agProp, ips: false,
+      detalle: `(${miles(ag.base)} cobrado en ${anio} + ${miles(extraAg)} de esta liquidación) ÷ 12` + (ag.pagado ? ` − ${miles(ag.pagado)} ya pagado` : '') });
+    const dPre = preavisoDias(persona.fechaIngreso, salida);
+    if (motivo === 'despido' && !op.preavisoOtorgado && dPre) {
+      add('Preaviso no dado', dPre * jp.jornal, `${dPre} días × jornal promedio ${miles(jp.jornal)}`);
+    }
+    if (motivo === 'renuncia' && !op.preavisoOtorgado && dPre) {
+      add('Descuento por preaviso no dado (mitad)', -(dPre / 2) * jp.jornal, `${String(dPre / 2).replace('.', ',')} días × ${miles(jp.jornal)}. El art. 90 del Código habla de la mitad; el folleto MTESS solo dice que puede descontarse`);
+    }
+    if (motivo === 'despido') {
+      const anios = aniosIndemnizables(persona.fechaIngreso, salida);
+      const porAnio = masDe(an, 10) ? 30 : 15; // más de 10 años, como la calculadora del MTESS
+      if (anios) add('Indemnización', anios * porAnio * jp.jornal, `${anios} ${anios === 1 ? 'año' : 'años'} × ${porAnio} jornales × ${miles(jp.jornal)}`);
+    }
+    if (persona.ips) {
+      const base = items.filter(i => i.ips).reduce((s, i) => s + i.monto, 0);
+      if (base) add('Descuento IPS del trabajador', -base * cfg.ipsTrabajador, `${String(Math.round(cfg.ipsTrabajador * 1000) / 10).replace('.', ',')} % de ${miles(base)}`);
+    }
+    const adel = saldoAdelantos(pagos, persona.id);
+    if (op.descontarAdelantos !== false && adel > 0) add('Adelantos por descontar', -adel, 'saldo registrado');
+
+    const ipsItem = items.find(i => i.concepto === 'Descuento IPS del trabajador');
+    const adelItem = items.find(i => i.concepto === 'Adelantos por descontar');
+    const bruto = items.filter(i => i !== ipsItem && i !== adelItem).reduce((s, i) => s + i.monto, 0);
+    const ipsMonto = ipsItem ? -ipsItem.monto : 0;
+    // Si los adelantos superan lo que se debe, solo se descuenta hasta dejar el neto en cero.
+    const adelantoDescontado = adelItem ? Math.min(-adelItem.monto, Math.max(0, bruto - ipsMonto)) : 0;
+    return {
+      motivo, antiguedad: an, preavisoDias: dPre, jornalSueldo, jornalVac, jornalPromedio: jp,
+      items, total: items.reduce((s, i) => s + i.monto, 0),
+      registro: { monto: Math.max(0, bruto), ipsTrabajador: ipsMonto, adelantoDescontado, deudaAdelantos: adelItem ? -adelItem.monto - adelantoDescontado : 0 }
+    };
+  }
+
+  // ---------- alertas ----------
+  function alertas(personas, pagos, cfg, fecha) {
+    const out = [];
+    personas.filter(p => p.activo).forEach(p => {
+      const est = estadoPersona(p, pagos, fecha);
+      est.pendientes.filter(x => x.atrasado).forEach(x => out.push({
+        nivel: 'grave', personaId: p.id, texto: `${p.nombre}: sueldo ${/^\d/.test(etiquetaPeriodo(x.desde, x.hasta)) ? 'del' : 'de'} ${etiquetaPeriodo(x.desde, x.hasta)} sin registrar; vencía el ${fechaCorta(x.vence)}.`
+      }));
+      const minimo = minimoPersona(p, cfg);
+      if (p.frecuencia !== 'variable' && (p.sueldoMensual || 0) < minimo) out.push({
+        nivel: 'grave', personaId: p.id, texto: `${p.nombre}: el sueldo de ${miles(p.sueldoMensual)} está debajo del mínimo para su jornada (${miles(minimo)}).`
+      });
+      if (p.jornada === 'parcial' && (p.horasSemana < 16 || p.horasSemana > 32)) out.push({
+        nivel: 'aviso', personaId: p.id, texto: `${p.nombre}: el tiempo parcial va de 16 a 32 horas por semana; tiene ${p.horasSemana}.`
+      });
+      if (!p.ips) out.push({ nivel: 'aviso', personaId: p.id, texto: `${p.nombre}: sin inscripción en IPS. Es obligatoria y la hace el empleador.` });
+      if (fecha.slice(5, 7) === '12') {
+        const ag = aguinaldo(pagos, p.id, fecha.slice(0, 4));
+        if (ag.pendiente > 0) out.push({ nivel: 'aviso', personaId: p.id, texto: `${p.nombre}: aguinaldo de ${miles(ag.pendiente)} a pagar hasta el 31 de diciembre.` });
+      }
+      const vac = vacaciones(p, pagos, fecha);
+      if (vac.pendientes > 0) out.push({ nivel: 'info', personaId: p.id, texto: `${p.nombre} tiene ${vac.pendientes} días de vacaciones sin tomar.` });
+    });
+    if (cfg.smVigencia && diasEntre(cfg.smVigencia, fecha) > 365) out.push({
+      nivel: 'aviso', personaId: '', texto: 'El sueldo mínimo cargado tiene más de un año. Revisa si hubo reajuste en Ajustes.'
+    });
+    return out;
+  }
+
+  // ---------- formato ----------
+  const miles = n => (n < 0 ? '−' : '') + String(Math.abs(Math.round(n || 0))).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  function fechaCorta(s, conAnio) {
+    const [y, m, d] = s.split('-').map(Number);
+    return `${d} ${MESES[m - 1]}` + (conAnio ? ` ${y}` : '');
+  }
+  function etiquetaPeriodo(desde, hasta) {
+    if (!desde) return '';
+    const [y1, m1, d1] = desde.split('-').map(Number);
+    const [y2, m2, d2] = hasta.split('-').map(Number);
+    if (y1 === y2 && m1 === 1 && d1 === 1 && m2 === 12 && d2 === 31) return `año ${y1}`;
+    if (y1 === y2 && m1 === m2 && d1 === 1 && d2 === diasDelMes(y2, m2)) return `${MESES_LARGOS[m1 - 1]} ${y1}`;
+    if (desde === hasta) return fechaCorta(desde, true);
+    if (y1 === y2 && m1 === m2) return `${d1} al ${d2} ${MESES[m1 - 1]} ${y1}`;
+    return `${fechaCorta(desde, y1 !== y2)} al ${fechaCorta(hasta, true)}`;
+  }
+
+  /** Número a letras en español, hasta 999.999.999 («un millón quinientos mil»). */
+  function letras(num) {
+    let n = Math.round(Math.abs(num));
+    if (n === 0) return 'cero';
+    const U = ['', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'once', 'doce',
+      'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve', 'veinte', 'veintiuno',
+      'veintidós', 'veintitrés', 'veinticuatro', 'veinticinco', 'veintiséis', 'veintisiete', 'veintiocho', 'veintinueve'];
+    const DEC = ['', '', '', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
+    const CEN = ['', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos',
+      'setecientos', 'ochocientos', 'novecientos'];
+    const hasta99 = x => (x < 30 ? U[x] : DEC[Math.floor(x / 10)] + (x % 10 ? ' y ' + U[x % 10] : ''));
+    const hasta999 = x => (x === 100 ? 'cien' : [CEN[Math.floor(x / 100)], hasta99(x % 100)].filter(Boolean).join(' '));
+    const apocope = t => t.replace(/veintiuno$/, 'veintiún').replace(/uno$/, 'un');
+    const mill = Math.floor(n / 1e6), mil = Math.floor(n / 1e3) % 1000, resto = n % 1000;
+    const partes = [];
+    if (mill) partes.push(mill === 1 ? 'un millón' : apocope(hasta999(mill)) + ' millones');
+    if (mil) partes.push(mil === 1 ? 'mil' : apocope(hasta999(mil)) + ' mil');
+    if (resto) partes.push(hasta999(resto));
+    return partes.join(' ');
+  }
+  function letrasGuaranies(n) {
+    const t = letras(n);
+    const de = Math.round(n) % 1e6 === 0 && Math.round(n) >= 1e6 ? ' de' : '';
+    return t.replace(/veintiuno$/, 'veintiún').replace(/(^|\s)uno$/, '$1un') + de + ' guaraníes';
+  }
+
+  return {
+    REMUNERATIVOS, TIPOS, MESES, MESES_LARGOS, D, S, sumarDias, diasEntre, diasDelMes, hoy,
+    antiguedad, sumarMeses, mesesEntre, diasComerciales, vacacionesDelAnio, vacacionesGanadas, preavisoDias, aniosIndemnizables, minimoPersona,
+    bonificacionFamiliar, remuneradoEntre, aguinaldo, saldoAdelantos, vacaciones, ipsMes,
+    periodoQueContiene, periodos, montoCompleto, cuartoDiaHabil, estadoPersona, jornalPromedio, liquidar,
+    alertas, miles, fechaCorta, etiquetaPeriodo, letras, letrasGuaranies
+  };
+})();
+
+
+/*CALC-FIN*/
+</script>
+<script>
+(() => {
+const C = Calc;
+const $ = s => document.querySelector(s);
+const E = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const G = n => '<span class="gs">Gs.</span>' + C.miles(n);
+const GT = n => 'Gs. ' + C.miles(n);
+const nuevoId = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 12));
+const version = r => (r ? String(r.editadoEn || r.creadoEn || '') : undefined);
+const pl = (n, uno, varios) => `${n} ${n === 1 ? uno : varios}`;
+const iniciales = n => String(n || '?').trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+const COLORES = ['#c2410c', '#0f766e', '#a16207', '#be185d', '#4d7c0f'];
+const colorDe = id => { const i = S.personas.findIndex(p => p.id === id); return COLORES[(i < 0 ? 0 : i) % COLORES.length]; };
+const av = id => `<span class="av" style="--c:${colorDe(id)}" aria-hidden="true">${E(iniciales(nombre(id)))}</span>`;
+const ICON = {
+  adelanto: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M9 11l3-3 3 3"/></svg>',
+  aguinaldo: '<svg viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="11" rx="2"/><path d="M12 9v11M4 13h16M12 9c-2-4-6-3-5 0M12 9c2-4 6-3 5 0"/></svg>',
+  vacaciones: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/></svg>'
+};
+const tiempo = a => `${pl(a.anios, 'año', 'años')}, ${pl(a.meses, 'mes', 'meses')} y ${pl(a.dias, 'día', 'días')}`;
+const FRECUENCIAS = { quincenal: 'quincenal', mensual: 'mensual', semanal: 'semanal', variable: 'por día u hora' };
+const MEDIOS = ['Efectivo', 'Transferencia', 'Billetera móvil', 'Otro'];
+
+const S = { personas: [], pagos: [], config: {}, usuario: '', url: '', vista: 'inicio', personaId: '', filtroPersona: '', filtroMes: '', mesResumen: C.hoy().slice(0, 7) };
+
+// ---------- comunicación con Google (o modo demostración) ----------
+// En la página publicada, window.API_URL apunta al servidor de Apps Script.
+// La llave de cada persona llega una vez en el enlace (#llave=...) y queda guardada en el teléfono.
+const API_URL = window.API_URL || '';
+const enLinea = !!API_URL;
+const CLAVE_LLAVE = 'pagosHogarLlave';
+function leerLlave() {
+  const m = location.hash.match(/llave=([A-Za-z0-9_-]{32,})/);
+  try {
+    if (m) localStorage.setItem(CLAVE_LLAVE, m[1]);
+    return localStorage.getItem(CLAVE_LLAVE) || (m ? m[1] : '');
+  } catch (e) { return m ? m[1] : ''; }
+}
+let llave = leerLlave();
+async function api(fn, ...args) {
+  if (!enLinea) return Demo[fn](...args);
+  if (!llave) throw new Error('Falta la llave de acceso');
+  let r;
+  try {
+    r = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ llave, fn, args }) });
+  } catch (e) { throw new Error('Sin conexión con el servidor. Revisa internet y vuelve a intentarlo.'); }
+  const j = await r.json().catch(() => ({ ok: false, error: 'Respuesta inesperada del servidor' }));
+  if (!j.ok) {
+    if (/Llave no válida/.test(j.error)) { S.vista = 'llave'; render(); }
+    throw new Error(j.error);
+  }
+  return j.datos;
+}
+let enCurso = 0, tCarga;
+async function llamar(fn, ...args) {
+  enCurso++; $('#carga').classList.add('on');
+  clearTimeout(tCarga); tCarga = setTimeout(() => { enCurso = 0; $('#carga').classList.remove('on'); }, 20000);
+  try {
+    const r = await api(fn, ...args);
+    Object.assign(S, r);
+    render();
+    return r;
+  } catch (e) {
+    avisar('No se pudo completar: ' + (e && e.message ? e.message : e), true);
+    throw e;
+  } finally {
+    enCurso = Math.max(0, enCurso - 1);
+    if (!enCurso) $('#carga').classList.remove('on');
+  }
+}
+
+let tAviso;
+function avisar(texto, error) {
+  const a = $('#aviso');
+  a.textContent = texto; a.className = 'on' + (error ? ' error' : '');
+  clearTimeout(tAviso); tAviso = setTimeout(() => { a.className = ''; }, error ? 6000 : 2600);
+}
+
+const persona = id => S.personas.find(p => p.id === id);
+const nombre = id => (persona(id) || {}).nombre || '—';
+const opcionesPersonas = (sel, todas) => S.personas.filter(p => todas || p.activo || p.id === sel)
+  .map(p => `<option value="${E(p.id)}"${p.id === sel ? ' selected' : ''}>${E(p.nombre)}</option>`).join('');
+
+// ---------- vistas ----------
+function render() {
+  $('#titulo').textContent = 'Pagos del hogar';
+  $('#hogar').textContent = S.config.nombreHogar ? 'Libro de ' + S.config.nombreHogar : '';
+  $('#usuario').textContent = S.usuario ? '· ' + S.usuario : '';
+  $('#yo').textContent = (S.usuario && S.usuario.includes('@') ? S.usuario : (S.config.nombreHogar || 'P')).slice(0, 1).toUpperCase();
+  $('#yo').title = S.usuario || '';
+  document.querySelectorAll('.pestanas button').forEach(b => {
+    const activa = b.dataset.vista === S.vista || (S.vista === 'persona' && b.dataset.vista === 'personas');
+    activa ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current');
+  });
+  const fab = document.querySelector('.fab'); if (fab) fab.hidden = S.vista === 'llave';
+  const vistas = { llave: vLlave, inicio: vInicio, pagos: vPagos, personas: vPersonas, persona: vPersona, resumen: vResumen, ajustes: vAjustes };
+  $('#vista').innerHTML = `<div class="pagina">${(vistas[S.vista] || vInicio)()}</div>`;
+}
+
+function vInicio() {
+  const hoy = C.hoy();
+  const [y, m, d] = hoy.split('-').map(Number);
+  const mes = hoy.slice(0, 7);
+  const cab = '';
+  const activas = S.personas.filter(p => p.activo);
+  if (!activas.length) {
+    return cab + `<div class="vacio"><h2>Agrega a la primera persona</h2>
+      <p>Con su sueldo, su jornada y cada cuánto se le paga, la app calcula lo demás.</p>
+      <button class="btn" data-accion="nuevaPersona">Agregar persona</button></div>`;
+  }
+  // Resumen del mes: lo que falta pagar (incluido lo vencido), lo pagado y el IPS.
+  let porPagar = 0, vencido = 0;
+  activas.forEach(p => C.estadoPersona(p, S.pagos, hoy).pendientes.forEach(x => {
+    if (x.desde.slice(0, 7) <= mes) { porPagar += x.monto; if (x.atrasado) vencido += x.monto; }
+  }));
+  const pagado = S.pagos.filter(x => !x.anulado && x.fecha.slice(0, 7) === mes).reduce((t, x) => t + x.neto, 0);
+  const ips = activas.reduce((t, p) => t + C.ipsMes(p, S.pagos, S.config, mes).total, 0);
+  const pct = Math.round(pagado / Math.max(1, pagado + porPagar) * 100);
+  let html = cab + `<section class="hero">
+    <div class="hero-et">Por pagar en ${C.MESES_LARGOS[m - 1]}</div>
+    <div class="hero-num">${G(porPagar)}</div>
+    ${vencido ? `<span class="pastilla">${G(vencido)} vencido</span>` : '<span class="pastilla ok">Nada vencido</span>'}
+    <div class="barra" role="img" aria-label="${pct} % del mes pagado"><i style="width:${pct}%"></i></div>
+    <div class="hero-fila"><div><span>Pagado este mes</span><b class="num">${C.miles(pagado)}</b></div><div><span>IPS del mes</span><b class="num">${C.miles(ips)}</b></div></div>
+  </section>`;
+  const notas = C.alertas(S.personas, S.pagos, S.config, hoy);
+  const graves = notas.filter(n => n.nivel !== 'info');
+  if (graves.length) html += `<div class="seccion">Para atender</div><ul class="notas">${graves.map(n => `<li class="${n.nivel}">${E(n.texto)}</li>`).join('')}</ul>`;
+  html += `<div class="seccion">Personas <button data-accion="nuevaPersona">Agregar</button></div>`;
+  html += activas.map(p => {
+    const est = C.estadoPersona(p, S.pagos, hoy);
+    const prox = est.proximo;
+    const adel = C.saldoAdelantos(S.pagos, p.id);
+    const ag = C.aguinaldo(S.pagos, p.id, String(y));
+    const vac = C.vacaciones(p, S.pagos, hoy);
+    let proxHtml = p.frecuencia === 'variable'
+      ? '<div><small>Se paga por día u hora</small>Registra cada pago al hacerlo</div>'
+      : '<div><small>Próximo sueldo</small><b>Al día</b></div><span class="tag ok">al día</span>';
+    if (prox) {
+      const tag = prox.atrasado ? '<span class="tag atrasado">atrasado</span>' : prox.enCurso ? '<span class="tag curso">en curso</span>' : '<span class="tag curso">por pagar</span>';
+      const vencidos = est.pendientes.filter(x => x.atrasado);
+      const deuda = vencidos.reduce((t, x) => t + x.monto, 0);
+      const extra = vencidos.length > 1 ? ` · ${vencidos.length} vencidos: ${C.miles(deuda)}` : est.pendientes.length > 1 ? ` · y ${pl(est.pendientes.length - 1, 'período', 'períodos')} más` : '';
+      proxHtml = `<div><small>${E(C.etiquetaPeriodo(prox.desde, prox.hasta))}${prox.parcial ? ' (resto)' : ''} · vence ${C.fechaCorta(prox.vence)}${extra}</small><b class="num">${G(prox.monto)}</b></div>${tag}`;
+    }
+    const pagMes = S.pagos.filter(x => !x.anulado && x.personaId === p.id && x.tipo === 'sueldo' && (x.periodoHasta || '').slice(0, 7) === mes).reduce((t, x) => t + x.monto, 0);
+    const pctP = p.sueldoMensual ? Math.min(100, Math.round(pagMes / p.sueldoMensual * 100)) : 0;
+    return `<article class="renglon${prox && prox.atrasado ? ' debe' : ''}">
+      <div class="per-cab"><span class="av" style="--c:${colorDe(p.id)}" aria-hidden="true">${E(iniciales(p.nombre))}</span><div><h3>${E(p.nombre)}</h3><div class="rol">${E(p.funcion || 'Trabajo doméstico')} · ${FRECUENCIAS[p.frecuencia] || ''}${p.sueldoMensual ? ` · ${C.miles(p.sueldoMensual)} al mes` : ''}</div></div></div>
+      ${p.sueldoMensual ? `<div class="prog" style="--c:${colorDe(p.id)}"><i style="width:${pctP}%"></i></div><div class="prog-t">${C.MESES_LARGOS[m - 1]}: ${C.miles(pagMes)} de ${C.miles(p.sueldoMensual)} pagado</div>` : ''}
+      <div class="prox">${proxHtml}</div>
+      <dl class="datos">
+        <div><span class="ic">${ICON.adelanto}</span><dt>Adelantos</dt><dd class="num">${C.miles(adel)}</dd></div>
+        <div><span class="ic">${ICON.aguinaldo}</span><dt>Aguinaldo ${y}</dt><dd class="num">${C.miles(ag.devengado)}</dd></div>
+        <div><span class="ic">${ICON.vacaciones}</span><dt>Vacaciones</dt><dd>${pl(vac.pendientes, 'día', 'días')}</dd></div>
+      </dl>
+      <div class="acciones">
+        <button class="btn" data-accion="pagar" data-id="${E(p.id)}">Registrar sueldo</button>
+        <button class="btn sec" data-accion="adelanto" data-id="${E(p.id)}">Adelanto</button>
+        <button class="btn sec" data-accion="verPersona" data-id="${E(p.id)}" aria-label="Ver ficha de ${E(p.nombre)}" style="flex:none;width:50px;padding:0">···</button>
+      </div>
+    </article>`;
+  }).join('');
+  const ultimos = S.pagos.filter(p => !p.anulado).sort(ordenPagos).slice(0, 5);
+  if (ultimos.length) html += `<div class="seccion">Últimos movimientos <button data-vista="pagos">Ver todo</button></div><div class="lista">${ultimos.map(filaPago).join('')}</div>`;
+  return html;
+}
+
+const ordenPagos = (a, b) => (b.fecha + (b.creadoEn || '')).localeCompare(a.fecha + (a.creadoEn || ''));
+
+function filaPago(p) {
+  const [, m, d] = (p.fecha || '0000-01-01').split('-');
+  return `<button class="fila-pago${p.anulado ? ' anulado' : ''}" data-accion="verPago" data-id="${E(p.id)}">
+    ${av(p.personaId)}
+    <span class="q">${E(nombre(p.personaId))}</span>
+    <span class="t">${+d} ${C.MESES[+m - 1]} · ${E(C.TIPOS[p.tipo] || p.tipo)}${p.periodoDesde && p.tipo !== 'adelanto' ? ' · ' + E(C.etiquetaPeriodo(p.periodoDesde, p.periodoHasta)) : ''}${p.anulado ? ' · anulado' : ''}</span>
+    <span class="m num">${G(p.neto)}</span>
+  </button>`;
+}
+
+function vPagos() {
+  let lista = S.pagos.slice().sort(ordenPagos);
+  if (S.filtroPersona) lista = lista.filter(p => p.personaId === S.filtroPersona);
+  if (S.filtroMes) lista = lista.filter(p => p.fecha.slice(0, 7) === S.filtroMes);
+  const total = lista.filter(p => !p.anulado).reduce((s, p) => s + p.neto, 0);
+  return `<div class="titulo-vista"><h2>Pagos</h2><button class="btn" data-accion="nuevoPago">Nuevo pago</button></div>
+    <div class="filtros">
+      <select id="fPersona" aria-label="Filtrar por persona"><option value="">Todas las personas</option>${opcionesPersonas(S.filtroPersona, true)}</select>
+      <select id="fMes" aria-label="Filtrar por mes"><option value="">Todos los meses</option>${[...new Set(S.pagos.map(x => x.fecha.slice(0, 7)))].sort().reverse().map(mm => `<option value="${mm}"${mm === S.filtroMes ? ' selected' : ''}>${C.MESES_LARGOS[+mm.slice(5) - 1]} ${mm.slice(0, 4)}</option>`).join('')}</select>
+    </div>
+    <p class="nota-pie">${pl(lista.length, 'movimiento', 'movimientos')} · total entregado (con adelantos): <b class="num">${G(total)}</b></p>
+    ${lista.length ? `<div class="lista">${lista.map(filaPago).join('')}</div>` : `<div class="vacio"><p>No hay pagos ${S.filtroPersona || S.filtroMes ? 'con este filtro' : 'registrados todavía'}.</p>${S.filtroPersona || S.filtroMes ? '<button class="btn sec" data-accion="quitarFiltro">Ver todos</button>' : ''}</div>`}`;
+}
+
+function vPersonas() {
+  const lista = S.personas.slice().sort((a, b) => (b.activo - a.activo) || a.nombre.localeCompare(b.nombre));
+  return `<div class="titulo-vista"><h2>Personas</h2><button class="btn" data-accion="nuevaPersona">Agregar</button></div>
+    ${lista.length ? lista.map(p => `<article class="renglon">
+      <div class="per-cab"><span class="av" style="--c:${colorDe(p.id)}" aria-hidden="true">${E(iniciales(p.nombre))}</span><div><h3>${E(p.nombre)}${p.activo ? '' : ' <span class="tag">ya no trabaja</span>'}</h3>
+      <div class="rol">${E(p.funcion || 'Trabajo doméstico')} · desde ${C.fechaCorta(p.fechaIngreso, true)} · ${p.jornada === 'parcial' ? p.horasSemana + ' h por semana' : 'jornada completa'} · ${C.miles(p.sueldoMensual)}</div></div></div>
+      <div class="acciones" style="margin-top:14px"><button class="btn sec" data-accion="verPersona" data-id="${E(p.id)}">Ver ficha</button></div>
+    </article>`).join('') : '<p class="vacio">Aún no hay personas.</p>'}`;
+}
+
+function vPersona() {
+  const p = persona(S.personaId);
+  if (!p) { S.vista = 'personas'; return vPersonas(); }
+  const hoy = C.hoy();
+  const hasta = p.fechaSalida && p.fechaSalida < hoy ? p.fechaSalida : hoy;
+  const an = C.antiguedad(p.fechaIngreso, hasta);
+  const anio = hasta.slice(0, 4);
+  const ag = C.aguinaldo(S.pagos, p.id, anio);
+  const vac = C.vacaciones(p, S.pagos, hasta);
+  const ips = C.ipsMes(p, S.pagos, S.config, hasta.slice(0, 7));
+  const minimo = C.minimoPersona(p, S.config);
+  const bonif = C.bonificacionFamiliar(p, S.config);
+  const pagos = S.pagos.filter(x => x.personaId === p.id).sort(ordenPagos);
+  const fila = (k, v) => `<dt>${k}</dt><dd>${v}</dd>`;
+  return `<div class="titulo-vista"><h2>${E(p.nombre)}</h2><button class="btn sec" data-accion="editarPersona" data-id="${E(p.id)}">Editar</button></div>
+    <div class="ficha">
+    <div class="seccion">Contrato</div>
+    <dl>
+      ${fila('Función', E(p.funcion || 'Trabajo doméstico'))}
+      ${fila('Ingreso', C.fechaCorta(p.fechaIngreso, true))}
+      ${fila('Antigüedad', tiempo(an))}
+      ${fila('Modalidad', p.modalidad === 'sin retiro' ? 'Sin retiro (vive en la casa)' : 'Con retiro')}
+      ${fila('Jornada', p.jornada === 'parcial' ? `Tiempo parcial, ${p.horasSemana} h por semana` : 'Completa (48 h por semana)')}
+      ${fila('Sueldo mensual', `<span class="num">${G(p.sueldoMensual)}</span>`)}
+      ${fila('Mínimo para su jornada', `<span class="num">${G(minimo)}</span>`)}
+      ${fila('Se paga', FRECUENCIAS[p.frecuencia])}
+      ${fila('IPS', p.ips ? 'Con inscripción' : '<b style="color:var(--sello)">Sin inscripción</b>')}
+      ${p.hijosMenores ? fila('Bonificación familiar', `<span class="num">${G(bonif)}</span> al mes (${pl(p.hijosMenores, 'hijo', 'hijos')})`) : ''}
+      ${p.fechaSalida ? fila('Salida', C.fechaCorta(p.fechaSalida, true)) : ''}
+    </dl>
+    <div class="seccion">Lo que le corresponde por ley</div>
+    <dl>
+      ${fila(`Aguinaldo ${anio}`, `<span class="num">${G(ag.devengado)}</span>`)}
+      ${fila('· base cobrada en el año', `<span class="num">${G(ag.base)}</span>`)}
+      ${fila('· ya pagado', ag.enLiquidacion ? 'incluido en la liquidación' : `<span class="num">${G(ag.pagado)}</span>`)}
+      ${(p.controlDesde || '') > anio + '-01-01' && (p.controlDesde || '') > p.fechaIngreso ? `<dt colspan="2" style="grid-column:1/-1;color:var(--ambar)">Solo cuenta lo registrado desde el ${C.fechaCorta(p.controlDesde, true)}: suma a mano lo cobrado antes.</dt>` : ''}
+      ${fila('Vacaciones ganadas', `${vac.ganadas} días hábiles${vac.iniciales ? ` (${vac.iniciales} de antes del control)` : ''}`)}
+      ${fila('Vacaciones tomadas', `${vac.tomadas} días`)}
+      ${fila('Vacaciones pendientes', `<b>${vac.pendientes} días</b>`)}
+      ${fila('Aviso previo si hoy se terminara el contrato', `${C.preavisoDias(p.fechaIngreso, hasta)} días`)}
+      ${fila('Adelantos por descontar', `<span class="num">${G(C.saldoAdelantos(S.pagos, p.id))}</span>`)}
+    </dl>
+    <div class="seccion">IPS de ${C.MESES_LARGOS[+hasta.slice(5, 7) - 1]}</div>
+    ${p.ips ? `<dl>
+      ${fila('Base registrada', `<span class="num">${G(ips.base)}</span>`)}
+      ${fila('Aporte personal 9 %', `<span class="num">${G(ips.obrero)}</span>`)}
+      ${fila('Ya retenido en los recibos', `<span class="num">${G(ips.retenido)}</span>`)}
+      ${fila('Aporte del empleador 16,5 %', `<span class="num">${G(ips.patronal)}</span>`)}
+      ${p.jornada === 'parcial' ? fila('Complemento patronal salud', `<span class="num">${G(ips.complemento)}</span>`) : ''}
+      ${fila('<b>Total a pagar al IPS</b>', `<b class="num">${G(ips.total)}</b>`)}
+    </dl>${ips.incompleto ? '<p class="nota-pie">Faltan sueldos de este mes por registrar: el total todavía no es el definitivo' + (p.jornada === 'parcial' ? ' y el complemento de salud se calcula al completarlo' : '') + '.</p>' : ''}` : '<p class="nota-pie">No se calcula: no tiene inscripción en IPS.</p>'}
+    </div>
+    <div class="acciones" style="margin-top:16px">
+      <button class="btn" data-accion="pagar" data-id="${E(p.id)}">Registrar sueldo</button>
+      <button class="btn sec" data-accion="nuevoPagoPersona" data-id="${E(p.id)}">Otro pago</button>
+      <button class="btn sec" data-accion="liquidacion" data-id="${E(p.id)}">Simular liquidación</button>
+    </div>
+    <div class="seccion">Movimientos</div>
+    ${pagos.length ? `<div class="lista">${pagos.map(filaPago).join('')}</div>` : '<p class="nota-pie">Sin pagos registrados.</p>'}`;
+}
+
+function vResumen() {
+  const mes = S.mesResumen;
+  const anio = mes.slice(0, 4);
+  const filas = S.personas.map(p => {
+    const delMes = S.pagos.filter(x => !x.anulado && x.personaId === p.id && x.fecha.slice(0, 7) === mes);
+    const entregado = delMes.reduce((s, x) => s + x.neto, 0);
+    const ips = C.ipsMes(p, S.pagos, S.config, mes);
+    const delAnio = S.pagos.filter(x => !x.anulado && x.personaId === p.id && x.fecha.slice(0, 4) === anio);
+    const anual = delAnio.reduce((s, x) => s + x.neto, 0);
+    return { p, entregado, ips, anual, hay: entregado || ips.base || anual };
+  }).filter(f => f.hay);
+  const tot = k => filas.reduce((s, f) => s + k(f), 0);
+  const [y, m] = mes.split('-').map(Number);
+  return `<div class="titulo-vista"><h2>Resumen</h2><input type="month" class="selector" id="rMes" value="${E(mes)}" aria-label="Mes del resumen"></div>
+    <div class="seccion">${C.MESES_LARGOS[m - 1]} ${y}</div>
+    ${filas.length ? `<div class="desplaza"><table class="tabla">
+      <thead><tr><th>Persona</th><th>Entregado</th><th>Sueldos del mes</th><th>IPS a pagar</th></tr></thead>
+      <tbody>${filas.map(f => `<tr><td>${E(f.p.nombre)}</td><td class="num">${C.miles(f.entregado)}</td><td class="num">${C.miles(f.ips.base)}</td><td class="num">${C.miles(f.ips.total)}</td></tr>`).join('')}</tbody>
+      <tfoot><tr><td>Total</td><td class="num">${C.miles(tot(f => f.entregado))}</td><td class="num">${C.miles(tot(f => f.ips.base))}</td><td class="num">${C.miles(tot(f => f.ips.total))}</td></tr></tfoot>
+    </table></div>
+    <p class="nota-pie"><b>Entregado:</b> lo que se pagó en el mes, ya descontados el IPS y los adelantos. <b>IPS a pagar:</b> el 9 % descontado al personal más el 16,5 % que pone el empleador (y el complemento de salud si es a tiempo parcial), sobre los sueldos de ese mes.</p>
+    <div class="seccion">Año ${anio}</div>
+    <div class="desplaza"><table class="tabla">
+      <thead><tr><th>Persona</th><th>Entregado en el año</th><th>Aguinaldo acumulado</th></tr></thead>
+      <tbody>${filas.map(f => `<tr><td>${E(f.p.nombre)}</td><td class="num">${C.miles(f.anual)}</td><td class="num">${C.miles(C.aguinaldo(S.pagos, f.p.id, anio).devengado)}</td></tr>`).join('')}</tbody>
+    </table></div>` : '<p class="vacio">No hay movimientos en este mes.</p>'}
+    ${S.url ? `<p class="nota-pie" style="margin-top:18px">Todos los datos están en la <a href="${E(S.url)}" target="_blank" rel="noopener">hoja de Google</a>, que también se puede descargar como Excel.</p>` : ''}`;
+}
+
+function vLlave() {
+  return `<div class="titulo-vista"><h2>Acceso</h2></div>
+    <p class="nota-pie">Abre el enlace personal que te pasó Alberto, o pega aquí tu llave de acceso. Queda guardada en este teléfono.</p>
+    <form id="fLlave"><div class="campo"><label for="lLlave">Llave de acceso</label><input id="lLlave" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+    <button class="btn" type="submit">Entrar</button></form>`;
+}
+
+function vAjustes() {
+  const c = S.config;
+  return `<div class="titulo-vista"><h2>Ajustes</h2></div>
+    <form id="fAjustes">
+      <div class="campo"><label for="aHogar">Nombre del hogar (aparece en los recibos)</label><input id="aHogar" name="nombreHogar" value="${E(c.nombreHogar)}" maxlength="60"></div>
+      <div class="seccion">Sueldo mínimo legal</div>
+      <div class="doble">
+        <div class="campo"><label for="aSm">Monto mensual (Gs.)</label><input id="aSm" name="salarioMinimo" inputmode="numeric" value="${E(C.miles(c.salarioMinimo))}"></div>
+        <div class="campo"><label for="aVig">Vigente desde</label><input id="aVig" name="smVigencia" type="date" value="${E(c.smVigencia)}"></div>
+      </div>
+      <div class="campo"><label for="aFuente">Norma</label><textarea id="aFuente" name="smFuente" rows="3">${E(c.smFuente)}</textarea></div>
+      <p class="nota-pie">El trabajo doméstico cobra el 100 % del mínimo legal (Ley 6338/2019). La hora mínima a tiempo parcial la fija la misma resolución del MTESS (2026: Gs. 14.635, art. 2 de la Res. 670/2026). Cuando el Gobierno lo reajuste, cambia aquí el monto y la fecha.</p>
+      <div class="seccion">Tasas del IPS</div>
+      <div class="doble">
+        <div class="campo"><label for="aIt">Aporte personal (%)</label><input id="aIt" name="ipsTrabajador" inputmode="decimal" value="${E(String(+(c.ipsTrabajador * 100).toFixed(2)).replace('.', ','))}"></div>
+        <div class="campo"><label for="aIe">Empleador (%)</label><input id="aIe" name="ipsEmpleador" inputmode="decimal" value="${E(String(+(c.ipsEmpleador * 100).toFixed(2)).replace('.', ','))}"></div>
+      </div>
+      <div class="doble">
+        <div class="campo"><label for="aHp">Hora mínima a tiempo parcial (Gs.)</label><input id="aHp" name="horaTiempoParcial" inputmode="numeric" value="${E(C.miles(c.horaTiempoParcial || 0))}"></div>
+        <div class="campo"><label for="aIc">Complemento salud, tiempo parcial (%)</label><input id="aIc" name="ipsComplementoSalud" inputmode="decimal" value="${E(String(+(c.ipsComplementoSalud * 100).toFixed(2)).replace('.', ','))}"></div>
+        <div class="campo"><label for="aBf">Bonificación familiar por hijo (%)</label><input id="aBf" name="bonifFamiliar" inputmode="decimal" value="${E(String(+(c.bonifFamiliar * 100).toFixed(2)).replace('.', ','))}"></div>
+      </div>
+      <p class="nota-pie">Fuente: folleto «Trabajo doméstico» del MTESS (2026), páginas 6, 7 y 9.</p>
+      <button class="btn" type="submit">Guardar ajustes</button>
+    </form>
+    <details style="margin-top:22px"><summary>Reglas que usa la app</summary>
+    <p class="nota-pie">Los artículos citados son del Código del Trabajo (Ley 213/93 con los cambios de la Ley 496/95), según el texto publicado por la Biblioteca del Congreso en <a href="https://www.bacn.gov.py/leyes-paraguayas/2608/ley-n-213-establece-el-codigo-del-trabajo" target="_blank" rel="noopener">bacn.gov.py</a>, y del folleto «Trabajo doméstico» del MTESS (2026).</p>
+    <p class="nota-pie">Aguinaldo: la doceava parte de lo cobrado en el año (sueldos, horas extra y vacaciones pagadas), art. 243 del Código del Trabajo. Vacaciones: 12 días hábiles por año hasta 5 años de antigüedad, 18 hasta 10 y 30 después (art. 218). Preaviso: 30, 45, 60 o 90 días (art. 87). Indemnización: 15 jornales por año o fracción mayor de seis meses (art. 91), 30 con más de 10 años. Salario diario de quien cobra por mes: sueldo ÷ 30, y la hora, ese diario ÷ 8 (Res. MTESS 670/2026, art. 1). Con ese diario se pagan los días sueltos y las vacaciones; las proporcionales, a 1 día por mes completo (1,5 desde 5 años y 2,5 desde 10), como la calculadora de liquidación del MTESS. Preaviso de 90 días e indemnización de 30 jornales solo con más de 10 años, como el Código y esa calculadora (el folleto dice «10 o más»). Jornal para preaviso e indemnización: promedio de los últimos seis meses registrados ÷ 30 (art. 92). Supuestos propios, sin norma que los fije: el sueldo quincenal vence el último día de la quincena; el cuarto día hábil del pago mensual no descuenta feriados; el complemento de salud del IPS a tiempo parcial es 9 % × (mínimo − sueldo), deducido de la tabla del folleto, que está hecha con el mínimo de 2025: conviene confirmarlo con el IPS; en la liquidación se descuenta IPS sobre sueldo y vacaciones, no sobre preaviso ni indemnización; la bonificación familiar no entra en la base del IPS ni del aguinaldo. El mínimo y las tasas son los de Ajustes: si cambian, los meses pasados se recalculan con el valor nuevo. Son estimaciones para orientarse; ante un despido conviene confirmar la liquidación con el MTESS, que la hace gratis.</p></details>
+    <p class="nota-pie">Sesión: ${E(S.usuario || 'sin identificar')}${S.url ? ` · <a href="${E(S.url)}" target="_blank" rel="noopener">abrir la hoja de datos</a>` : ''}</p>`;
+}
+
+// ---------- formularios ----------
+const hoja = $('#hoja');
+function abrir(titulo, cuerpo, pie, subtitulo) {
+  hoja.innerHTML = `<div class="dlg-cab"><div><h2 id="hoja-titulo">${titulo}</h2>${subtitulo ? `<div class="rol">${subtitulo}</div>` : ''}</div><button class="btn-icono" data-accion="cerrar">Cerrar</button></div>
+    <div class="dlg-cuerpo">${cuerpo}</div>${pie ? `<div class="dlg-pie">${pie}</div>` : ''}`;
+  if (!hoja.open) hoja.showModal();
+  hoja.scrollTop = 0;
+  const primero = hoja.querySelector('.dlg-cuerpo input, .dlg-cuerpo select');
+  if (primero && window.matchMedia('(pointer:fine)').matches) primero.focus(); else hoja.querySelector('.dlg-cab button').blur();
+}
+const pregunta = document.createElement('dialog');
+pregunta.id = 'pregunta';
+document.body.appendChild(pregunta);
+function preguntar(texto, si, no) {
+  return new Promise(resolver => {
+    pregunta.innerHTML = `<div class="dlg-cuerpo"><p>${E(texto)}</p></div><div class="dlg-pie"><button class="btn sec" value="no">${E(no || 'No')}</button><button class="btn" value="si">${E(si || 'Sí')}</button></div>`;
+    pregunta.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { pregunta.close(); resolver(b.value === 'si'); }));
+    pregunta.addEventListener('cancel', () => resolver(false), { once: true });
+    pregunta.showModal();
+  });
+}
+const cerrar = () => { delete hoja.dataset.cerrar; if (hoja.open) hoja.close(); };
+const num = v => Math.round(Number(String(v).replace(/[^\d-]/g, '')) || 0);
+const val = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+
+function formPersona(p) {
+  const nuevo = !p;
+  const hoy = C.hoy();
+  p = p || { nombre: '', funcion: '', documento: '', fechaIngreso: hoy, controlDesde: hoy, modalidad: 'con retiro', jornada: 'completa', horasSemana: 48, sueldoMensual: S.config.salarioMinimo, frecuencia: 'quincenal', ips: true, hijosMenores: 0, activo: true, fechaSalida: '', notas: '', vacacionesIniciales: 0 };
+  const sel = (v, op) => op.map(o => `<option value="${o[0]}"${o[0] === v ? ' selected' : ''}>${o[1]}</option>`).join('');
+  abrir(nuevo ? 'Nueva persona' : 'Editar datos', `
+    <form id="fPersonaForm" novalidate>
+      <div class="campo"><label for="pNombre">Nombre</label><input id="pNombre" required maxlength="80" value="${E(p.nombre)}" autocomplete="off"></div>
+      <div class="doble">
+        <div class="campo"><label for="pFuncion">Función</label><input id="pFuncion" maxlength="60" placeholder="Niñera, limpieza…" value="${E(p.funcion)}"></div>
+        <div class="campo"><label for="pDoc">Cédula (opcional)</label><input id="pDoc" maxlength="20" inputmode="numeric" value="${E(p.documento)}"></div>
+      </div>
+      <div class="doble">
+        <div class="campo"><label for="pIngreso">Fecha de ingreso</label><input id="pIngreso" type="date" value="${E(p.fechaIngreso)}"></div>
+        <div class="campo"><label for="pControl">Controlar pagos desde</label><input id="pControl" type="date" value="${E(p.controlDesde || p.fechaIngreso)}"><span class="ayuda">Los períodos anteriores no se reclaman.</span></div>
+      </div>
+      <div class="doble">
+        <div class="campo"><label for="pModalidad">Modalidad</label><select id="pModalidad">${sel(p.modalidad, [['con retiro', 'Con retiro'], ['sin retiro', 'Sin retiro (vive en la casa)']])}</select></div>
+        <div class="campo"><label for="pJornada">Jornada</label><select id="pJornada">${sel(p.jornada, [['completa', 'Completa'], ['parcial', 'Tiempo parcial']])}</select></div>
+      </div>
+      <div class="doble">
+        <div class="campo" id="cHoras"${p.jornada === 'parcial' ? '' : ' hidden'}><label for="pHoras">Horas por semana</label><input id="pHoras" inputmode="numeric" value="${E(p.horasSemana)}"><span class="ayuda">Entre 16 y 32.</span></div>
+        <div class="campo"><label for="pFrecuencia">Se le paga</label><select id="pFrecuencia">${sel(p.frecuencia, [['quincenal', 'Por quincena'], ['mensual', 'Por mes'], ['semanal', 'Por semana'], ['variable', 'Por día u hora (monto variable)']])}</select></div>
+      </div>
+      <div class="campo"><label for="pSueldo">Sueldo mensual acordado (Gs.)</label><span class="ayuda" id="pSueldoAyuda" hidden>Si se paga por día u hora, pon el equivalente mensual aproximado o 0.</span><input id="pSueldo" inputmode="numeric" value="${E(C.miles(p.sueldoMensual))}"><span class="ayuda" id="pMin"></span></div>
+      <label class="check"><input type="checkbox" id="pIps"${p.ips ? ' checked' : ''}> Tiene inscripción en IPS</label>
+      <div class="campo"><label for="pVacIni">Días de vacaciones pendientes al empezar a usar la app</label><input id="pVacIni" inputmode="numeric" value="${E(p.vacacionesIniciales || 0)}"><span class="ayuda">Los años anteriores al control no se calculan solos: anota aquí lo que se le debía en ese momento.</span></div>
+      <div class="campo"><label for="pHijos">Hijos menores de 17 años (bonificación familiar)</label><input id="pHijos" inputmode="numeric" value="${E(p.hijosMenores || 0)}"></div>
+      ${nuevo ? '' : `<div class="doble">
+        <label class="check"><input type="checkbox" id="pActivo"${p.activo ? ' checked' : ''}> Sigue trabajando</label>
+        <div class="campo"><label for="pSalida">Fecha de salida</label><input id="pSalida" type="date" value="${E(p.fechaSalida)}"></div>
+      </div>`}
+      <div class="campo"><label for="pNotas">Notas</label><textarea id="pNotas" rows="2" maxlength="500">${E(p.notas)}</textarea></div>
+      <p class="error" id="pError" role="alert"></p>
+    </form>`,
+    `<button class="btn sec" data-accion="cerrar">Cancelar</button><button class="btn" data-accion="guardarPersona" data-id="${nuevo ? '' : E(p.id)}">Guardar</button>`);
+  const actualizarMin = () => {
+    const tmp = { jornada: val('pJornada'), horasSemana: num(val('pHoras')) };
+    $('#cHoras').hidden = tmp.jornada !== 'parcial';
+    $('#pSueldoAyuda').hidden = val('pFrecuencia') !== 'variable';
+    const minimo = C.minimoPersona(tmp, S.config);
+    const s = num(val('pSueldo'));
+    $('#pMin').innerHTML = `Mínimo para esta jornada: <b class="num">${G(minimo)}</b>` + (s && s < minimo ? ' <span style="color:var(--sello)">· el sueldo está por debajo</span>' : '');
+  };
+  ['pJornada', 'pHoras', 'pSueldo', 'pFrecuencia'].forEach(id => document.getElementById(id).addEventListener('input', actualizarMin));
+  // Si la fecha de ingreso pasa a ser posterior al inicio del control, el control la acompaña.
+  $('#pIngreso').addEventListener('change', () => { if (val('pControl') < val('pIngreso')) $('#pControl').value = val('pIngreso'); });
+  actualizarMin();
+}
+
+async function guardarPersona(id) {
+  const o = {
+    id: id || '', nombre: val('pNombre').trim(), funcion: val('pFuncion').trim(), documento: val('pDoc').trim(),
+    fechaIngreso: val('pIngreso'), controlDesde: val('pControl'), modalidad: val('pModalidad'), jornada: val('pJornada'),
+    horasSemana: val('pJornada') === 'parcial' ? num(val('pHoras')) : 48, sueldoMensual: num(val('pSueldo')),
+    frecuencia: val('pFrecuencia'), ips: $('#pIps').checked, hijosMenores: num(val('pHijos')),
+    activo: id ? $('#pActivo').checked : true, fechaSalida: id ? val('pSalida') : '', notas: val('pNotas').trim(),
+    vacacionesIniciales: num(val('pVacIni'))
+  };
+  const err = !o.nombre ? 'Falta el nombre.' : !o.fechaIngreso ? 'Falta la fecha de ingreso.' : o.sueldoMensual <= 0 && o.frecuencia !== 'variable' ? 'Falta el sueldo.'
+    : o.controlDesde && o.controlDesde < o.fechaIngreso ? 'La fecha de control no puede ser anterior al ingreso.'
+    : o.fechaSalida && o.fechaSalida < o.fechaIngreso ? 'La salida es anterior al ingreso.' : '';
+  if (err) { $('#pError').textContent = err; return; }
+  if (!o.controlDesde) o.controlDesde = o.fechaIngreso;
+  if (id) o._version = version(persona(id)); else { o.id = nuevoId(); o.nuevo = true; }
+  await llamar('guardar', 'Personas', o);
+  cerrar(); avisar('Guardado');
+}
+
+function formPago(pago, inicial) {
+  const nuevo = !pago;
+  const hoy = C.hoy();
+  const base = Object.assign({ personaId: '', tipo: 'sueldo', fecha: hoy, periodoDesde: '', periodoHasta: '', monto: 0, ipsTrabajador: 0, adelantoDescontado: 0, dias: 0, medio: 'Efectivo', nota: '' }, pago || inicial || {});
+  if (!base.personaId) { const a = S.personas.find(p => p.activo); base.personaId = a ? a.id : ''; }
+  if (!S.personas.length) { avisar('Primero agrega a una persona.', true); return; }
+  const tipos = Object.keys(C.TIPOS).map(k => `<option value="${k}"${k === base.tipo ? ' selected' : ''}>${C.TIPOS[k]}</option>`).join('');
+  abrir(nuevo ? 'Registrar pago' : 'Editar pago', `
+    <form id="fPagoForm" novalidate>
+      <div class="resumen-pago" id="gResumen"></div>
+      <div class="doble">
+        <div class="campo"><label for="gPersona">Persona</label><select id="gPersona">${opcionesPersonas(base.personaId)}</select></div>
+        <div class="campo"><label for="gTipo">Concepto</label><select id="gTipo">${tipos}</select></div>
+      </div>
+      <div class="campo"><label for="gFecha">Fecha de pago</label><input id="gFecha" type="date" value="${E(base.fecha)}"></div>
+      <div class="doble" id="cPeriodo">
+        <div class="campo"><label for="gDesde">Período desde</label><input id="gDesde" type="date" value="${E(base.periodoDesde)}"></div>
+        <div class="campo"><label for="gHasta">hasta</label><input id="gHasta" type="date" value="${E(base.periodoHasta)}"></div>
+      </div>
+      <div class="campo" id="cDias" hidden><label for="gDias">Días de vacaciones tomados</label><input id="gDias" inputmode="numeric" value="${E(base.dias || '')}"><span class="ayuda">Si las vacaciones se pagan dentro del sueldo de siempre, deja el monto en 0 y anota solo los días.</span></div>
+      <div class="campo"><label for="gMonto">Monto bruto (Gs.)</label><input id="gMonto" inputmode="numeric" value="${E(C.miles(base.monto))}"><span class="ayuda" id="gSug"></span></div>
+      <div class="subtitulo">Detalle</div>
+      <div class="doble" id="cDescuentos">
+        <div class="campo"><label for="gIps">Descuento IPS 9 %</label><input id="gIps" inputmode="numeric" value="${E(C.miles(base.ipsTrabajador))}"></div>
+        <div class="campo"><label for="gAdel">Adelanto descontado</label><input id="gAdel" inputmode="numeric" value="${E(C.miles(base.adelantoDescontado))}"><span class="ayuda" id="gAdelAyuda"></span></div>
+      </div>
+      <div class="cuenta"><span>Total a entregar</span><strong id="gNeto"></strong></div>
+      <div class="doble" style="margin-top:12px">
+        <div class="campo"><label for="gMedio">Medio</label><select id="gMedio">${MEDIOS.map(m => `<option${m === base.medio ? ' selected' : ''}>${m}</option>`).join('')}</select></div>
+        <div class="campo"><label for="gNota">Nota</label><input id="gNota" maxlength="200" value="${E(base.nota)}"></div>
+      </div>
+      <p class="error" id="gError" role="alert"></p>
+    </form>`,
+    `${nuevo ? '' : `<button class="btn peligro" data-accion="anularPago" data-id="${E(pago.id)}">${pago.anulado ? 'Restaurar' : 'Anular'}</button>`}
+     <button class="btn${nuevo ? ' grande' : ''}" id="gBoton" data-accion="guardarPago" data-id="${nuevo ? '' : E(pago.id)}">Guardar</button>`);
+
+  const fmt = id => { const el = document.getElementById(id); const n = num(el.value); el.value = n ? C.miles(n) : (el.value === '' ? '' : '0'); };
+  const neto = () => {
+    const n = num(val('gMonto')) - num(val('gIps')) - num(val('gAdel'));
+    $('#gNeto').innerHTML = G(n);
+    if (nuevo) $('#gBoton').textContent = `Registrar ${GT(n)}`;
+    const per = persona(val('gPersona'));
+    const t = val('gTipo');
+    $('#gResumen').innerHTML = `<span class="av" style="--c:${per ? colorDe(per.id) : '#5d636b'}" aria-hidden="true">${E(iniciales(per ? per.nombre : '?'))}</span><div><b>${E(per ? per.nombre : 'Elige a la persona')}</b><span>${E(C.TIPOS[t] || '')}${t !== 'adelanto' && val('gDesde') && val('gHasta') ? ' · ' + E(C.etiquetaPeriodo(val('gDesde'), val('gHasta'))) : ''}</span></div>`;
+  };
+  const ipsDe = (p, tipo, monto) => (p && p.ips && C.REMUNERATIVOS.includes(tipo) ? Math.round(monto * S.config.ipsTrabajador) : 0);
+
+  function sugerir() {
+    const p = persona(val('gPersona'));
+    const tipo = val('gTipo');
+    const fecha = val('gFecha') || hoy;
+    $('#cDias').hidden = tipo !== 'vacaciones';
+    $('#cPeriodo').hidden = tipo === 'adelanto';
+    const sinDescuentos = tipo === 'aguinaldo' || tipo === 'adelanto';
+    $('#cDescuentos').hidden = sinDescuentos;
+    const saldo = p ? C.saldoAdelantos(S.pagos.filter(x => !pago || x.id !== pago.id), p.id) : 0;
+    $('#gAdelAyuda').textContent = saldo > 0 ? `Saldo pendiente: ${C.miles(saldo)}` : '';
+    if (!nuevo || !p) { neto(); return; }
+    let desde = fecha, hasta = fecha, monto = 0, sug = '';
+    if (tipo === 'sueldo' && p.frecuencia === 'variable') {
+      sug = 'Pago por día u hora: escribe el período y el monto de lo trabajado.';
+    } else if (tipo === 'sueldo') {
+      const est = C.estadoPersona(p, S.pagos, fecha);
+      const per = est.proximo || C.periodos(Object.assign({}, p, { controlDesde: C.sumarDias(est.ultimoPagado || p.fechaIngreso, 1) }), C.sumarDias(fecha, 31))[0];
+      if (per) { desde = per.desde; hasta = per.hasta; monto = per.monto; sug = per.completo ? 'Es el primer sueldo que falta pagar.' : 'Es el primer sueldo que falta pagar; el monto es proporcional a los días trabajados.'; }
+    } else if (tipo === 'aguinaldo') {
+      let y = fecha.slice(0, 4);
+      if (fecha.slice(5, 7) === '01' && C.aguinaldo(S.pagos, p.id, String(+y - 1)).pendiente > 0) y = String(+y - 1);
+      const ag = C.aguinaldo(S.pagos, p.id, y);
+      desde = y + '-01-01'; hasta = y + '-12-31'; monto = ag.pendiente;
+      sug = `Doceava parte de ${C.miles(ag.base)} cobrados en ${y}. El aguinaldo se paga entero, sin descuentos.`;
+    } else if (tipo === 'bonificacion') {
+      const per = C.periodoQueContiene(fecha, 'mensual'); desde = per.desde; hasta = per.hasta; monto = C.bonificacionFamiliar(p, S.config);
+      sug = `5 % del mínimo por cada hijo menor de 17 (${p.hijosMenores || 0}).`;
+    } else if (tipo === 'vacaciones') {
+      const vac = C.vacaciones(p, S.pagos, fecha);
+      sug = `Tiene ${vac.pendientes} días pendientes. Salario diario: ${C.miles(Math.round(p.sueldoMensual / 30))} (sueldo ÷ 30).`;
+    } else if (tipo === 'extra') {
+      sug = `Hora ordinaria: ${C.miles(Math.round(p.sueldoMensual / 30 / 8))} (sueldo ÷ 30 ÷ 8, Res. MTESS 670/2026).`
+        + ` Hora extra: +50 % (art. 234 del Código); feriado o descanso trabajado: doble (folleto MTESS, p. 5).`;
+    } else if (tipo === 'adelanto') {
+      sug = 'Se descontará de un pago posterior.';
+    }
+    $('#gDesde').value = desde; $('#gHasta').value = hasta;
+    $('#gMonto').value = C.miles(monto);
+    $('#gIps').value = C.miles(ipsDe(p, tipo, monto));
+    $('#gAdel').value = sinDescuentos ? '0' : C.miles(tipo === 'sueldo' ? Math.min(saldo, Math.max(0, monto - ipsDe(p, tipo, monto))) : 0);
+    $('#gSug').textContent = sug;
+    neto();
+  }
+  $('#gPersona').addEventListener('change', sugerir);
+  $('#gTipo').addEventListener('change', sugerir);
+  $('#gMonto').addEventListener('input', () => {
+    const p = persona(val('gPersona'));
+    $('#gIps').value = C.miles(ipsDe(p, val('gTipo'), num(val('gMonto'))));
+    neto();
+  });
+  ['gIps', 'gAdel', 'gDesde', 'gHasta'].forEach(id => document.getElementById(id).addEventListener('input', neto));
+  ['gMonto', 'gIps', 'gAdel'].forEach(id => document.getElementById(id).addEventListener('blur', () => { fmt(id); neto(); }));
+  if (nuevo && !inicial?.monto) sugerir(); else { $('#cDias').hidden = base.tipo !== 'vacaciones'; $('#cPeriodo').hidden = base.tipo === 'adelanto'; neto(); }
+}
+
+async function guardarPago(id) {
+  const tipo = val('gTipo');
+  const o = {
+    id: id || '', personaId: val('gPersona'), tipo, fecha: val('gFecha'),
+    periodoDesde: tipo === 'adelanto' ? val('gFecha') : val('gDesde'), periodoHasta: tipo === 'adelanto' ? val('gFecha') : val('gHasta'),
+    monto: num(val('gMonto')), ipsTrabajador: (tipo === 'aguinaldo' || tipo === 'adelanto') ? 0 : num(val('gIps')),
+    adelantoDescontado: (tipo === 'aguinaldo' || tipo === 'adelanto') ? 0 : num(val('gAdel')),
+    dias: tipo === 'vacaciones' ? num(val('gDias')) : 0, medio: val('gMedio'), nota: val('gNota').trim()
+  };
+  o.neto = o.monto - o.ipsTrabajador - o.adelantoDescontado;
+  const otros = S.pagos.filter(x => x.id !== id);
+  const saldo = C.saldoAdelantos(otros, o.personaId);
+  let err = '';
+  if (!o.personaId) err = 'Elige a la persona.';
+  else if (!o.fecha) err = 'Falta la fecha de pago.';
+  else if (!o.periodoDesde || !o.periodoHasta || o.periodoDesde > o.periodoHasta) err = 'Revisa el período: el inicio debe ser anterior al fin.';
+  else if (o.monto <= 0 && tipo !== 'vacaciones') err = 'Falta el monto.';
+  else if (tipo === 'vacaciones' && o.dias <= 0) err = 'Indica cuántos días de vacaciones tomó.';
+  else if (o.adelantoDescontado > saldo) err = `Solo hay ${C.miles(saldo)} de adelantos por descontar.`;
+  else if (o.neto < 0) err = 'Los descuentos superan el monto.';
+  if (err) { $('#gError').textContent = err; return; }
+  if (tipo === 'sueldo') {
+    const choca = otros.find(x => !x.anulado && x.tipo === 'sueldo' && x.personaId === o.personaId && x.periodoDesde <= o.periodoHasta && x.periodoHasta >= o.periodoDesde);
+    if (choca) {
+      if (!await preguntar(`Ya hay un sueldo registrado para el ${C.etiquetaPeriodo(choca.periodoDesde, choca.periodoHasta)}. ¿Registrar este también?`, 'Sí, registrar', 'No')) return;
+      o._forzar = true;
+    }
+  }
+  if (id) o._version = version(S.pagos.find(x => x.id === id)); else { o.id = nuevoId(); o.nuevo = true; }
+  const cierre = hoja.dataset.cerrar ? JSON.parse(hoja.dataset.cerrar) : null;
+  await llamar('guardar', 'Pagos', o);
+  delete hoja.dataset.cerrar;
+  cerrar(); avisar('Pago guardado');
+  if (cierre && tipo === 'liquidacion') {
+    const per = persona(cierre.id);
+    if (per && per.activo && await preguntar(`¿Marcar que ${per.nombre} dejó de trabajar el ${C.fechaCorta(cierre.salida, true)}? Así la app deja de esperar sueldos.`, 'Sí, marcar', 'Todavía no')) {
+      await llamar('guardar', 'Personas', { id: per.id, activo: false, fechaSalida: cierre.salida, _version: version(per) });
+    }
+  }
+  verPago(o.id);
+}
+
+function verPago(id) {
+  const p = S.pagos.find(x => x.id === id);
+  if (!p) return;
+  const per = persona(p.personaId) || {};
+  const linea = (k, v) => `<div class="linea-r"><span>${k}</span><span class="num">${v}</span></div>`;
+  const numero = S.pagos.slice().sort((a, b) => (a.creadoEn || '').localeCompare(b.creadoEn || '')).findIndex(x => x.id === p.id) + 1;
+  const periodoLargo = (a, b) => {
+    const f = x => { const [yy, mm, dd] = x.split('-').map(Number); return `${dd} de ${C.MESES_LARGOS[mm - 1]} de ${yy}`; };
+    const et = C.etiquetaPeriodo(a, b);
+    if (/^año/.test(et)) return 'del ' + et;
+    if (/^[a-z]+ \d{4}$/.test(et)) return 'de ' + et.replace(' ', ' de ');
+    return a === b ? 'del ' + f(a) : `del ${f(a).replace(/ de \d{4}$/, a.slice(0, 4) === b.slice(0, 4) ? '' : '$&').replace(/ de [a-z]+$/, a.slice(0, 7) === b.slice(0, 7) ? '' : '$&')} al ${f(b)}`;
+  };
+  const [y, m, d] = p.fecha.split('-').map(Number);
+  const textoWa = `Recibo de pago · ${per.nombre}\n${C.TIPOS[p.tipo]}${p.tipo !== 'adelanto' ? ' ' + C.etiquetaPeriodo(p.periodoDesde, p.periodoHasta) : ''}\nBruto: ${GT(p.monto)}${p.ipsTrabajador ? `\nIPS 9 %: −${C.miles(p.ipsTrabajador)}` : ''}${p.adelantoDescontado ? `\nAdelanto: −${C.miles(p.adelantoDescontado)}` : ''}\nNeto: ${GT(p.neto)}\nFecha: ${d}/${m}/${y}`;
+  abrir('Recibo', `
+    <div class="recibo" id="recibo">
+      <h3>Recibo de ${E((C.TIPOS[p.tipo] || '').toLowerCase())}</h3>
+      <div class="rol">${E(S.config.nombreHogar || '')} · Fecha de pago: ${d} de ${C.MESES_LARGOS[m - 1]} de ${y}</div>
+      ${p.anulado ? '<p><span class="tag atrasado">ANULADO</span></p>' : ''}
+      <p class="rol">Recibo n.º ${String(numero).padStart(4, '0')}</p>
+      <p>Yo, <b>${E(per.nombre || '')}</b>${per.documento ? `, C.I. ${E(per.documento)},` : ','} recibí de ${E(S.config.nombreHogar || 'mi empleador')} la suma de <b class="num">${G(p.neto)}</b> en concepto de ${E((C.TIPOS[p.tipo] || '').toLowerCase())}${p.tipo !== 'adelanto' && p.tipo !== 'liquidacion' ? ' por el período ' + E(periodoLargo(p.periodoDesde, p.periodoHasta)) : ''}${p.dias ? ` (${p.dias} días)` : ''}.</p>
+      <p class="letras">Son ${E(C.letrasGuaranies(p.neto))}.</p>
+      ${linea(p.tipo === 'sueldo' ? 'Sueldo del período' : 'Importe', 'Gs. ' + C.miles(p.monto))}
+      ${p.ipsTrabajador ? linea(`Descuento IPS (${String(Math.round(S.config.ipsTrabajador * 1000) / 10).replace('.', ',')} %)`, '− Gs. ' + C.miles(p.ipsTrabajador)) : ''}
+      ${p.adelantoDescontado ? linea('Adelanto descontado', '− Gs. ' + C.miles(p.adelantoDescontado)) : ''}
+      ${linea('<b>Neto recibido</b>', '<b>Gs. ' + C.miles(p.neto) + '</b>')}
+      <div class="linea-r"><span>Medio de pago</span><span class="medio">${E(p.medio)}</span></div>
+      ${p.nota ? `<p class="nota-pie">${E(p.nota)}</p>` : ''}
+      <div class="firmas"><div>${E(per.nombre || '')}${per.documento ? '<br>C.I. ' + E(per.documento) : ''}</div><div>${E(S.config.nombreHogar || '')}<br>Por el empleador</div></div>
+    </div>
+    <p class="nota-pie no-imprimir">Cargado por ${E(p.creadoPor || '—')}${p.editadoPor ? ` · editado por ${E(p.editadoPor)}` : ''}</p>`,
+    `<button class="btn sec" data-accion="editarPago" data-id="${E(p.id)}">Editar</button>
+     <a class="btn sec" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(textoWa)}">WhatsApp</a>
+     <button class="btn" data-accion="imprimir">Imprimir</button>`);
+}
+
+function formLiquidacion(id) {
+  const p = persona(id);
+  const hoy = C.hoy();
+  const est = C.estadoPersona(p, S.pagos, hoy);
+  const desde = est.ultimoPagado ? C.sumarDias(est.ultimoPagado, 1) : p.controlDesde || p.fechaIngreso;
+  const diasPend = C.diasComerciales(desde, hoy);
+  abrir('Liquidación', `
+    <div class="campo"><label for="lSalida">Último día de trabajo</label><input id="lSalida" type="date" value="${hoy}"></div>
+    <div>
+      <div class="campo"><label for="lMotivo">Motivo</label><select id="lMotivo">
+        <option value="despido">Despido sin causa justificada</option><option value="renuncia">Renuncia</option><option value="justificado">Despido con causa justificada</option></select></div>
+    </div>
+    <div class="doble">
+      <div class="campo"><label for="lDias">Días trabajados sin cobrar</label><input id="lDias" inputmode="numeric" value="${diasPend}"><span class="ayuda">Desde el último sueldo registrado, con meses de 30 días.</span></div>
+      <label class="check"><input type="checkbox" id="lPreaviso"> Se dio el preaviso por escrito</label>
+    </div>
+    <div id="lResultado"></div>
+    ${(p.controlDesde || '') > hoy.slice(0, 4) + '-01-01' && (p.controlDesde || '') > p.fechaIngreso ? `<p class="nota-pie" style="color:var(--ambar)">El aguinaldo solo cuenta lo registrado desde el ${C.fechaCorta(p.controlDesde, true)}. Suma a mano la doceava parte de lo cobrado antes.</p>` : ''}
+    <p class="nota-pie">Es una estimación con lo registrado en la app. Antes de pagar, conviene pedir la liquidación al MTESS (gratis, internos 551 a 553 del 021 729 0100). Durante el embarazo o la lactancia el despido es nulo (Ley 5508/15).</p>`,
+    `<button class="btn sec" data-accion="cerrar">Cerrar</button><button class="btn" data-accion="registrarLiquidacion" data-id="${E(p.id)}">Registrar como pago</button>`, E(p.nombre));
+  let diasTocados = false;
+  document.getElementById('lDias').addEventListener('input', () => { diasTocados = true; });
+  const calcular = () => {
+    const salida = val('lSalida') || hoy;
+    if (salida < p.fechaIngreso) { $('#lResultado').innerHTML = '<p class="error">La salida no puede ser anterior al ingreso.</p>'; hoja.dataset.liquidacion = ''; return; }
+    if (!diasTocados) $('#lDias').value = Math.max(0, salida >= desde ? C.diasComerciales(desde, salida) : 0);
+    const r = C.liquidar(p, S.pagos, S.config, { fechaSalida: salida, motivo: val('lMotivo'), preavisoOtorgado: $('#lPreaviso').checked, diasPendientes: num(val('lDias')) });
+    hoja.dataset.liquidacion = JSON.stringify(Object.assign({ salida, motivo: r.motivo }, r.registro));
+    $('#lResultado').innerHTML = `
+      <p class="nota-pie">Antigüedad: ${tiempo(r.antiguedad)}${r.motivo === 'prueba' ? ' · <b>dentro del período de prueba</b>: sin preaviso ni indemnización' : ''}. Jornal promedio: ${C.miles(r.jornalPromedio.jornal)}${r.jornalPromedio.conRegistros ? `, con lo cobrado del ${C.etiquetaPeriodo(r.jornalPromedio.desde, r.jornalPromedio.hasta)} (hasta seis meses${r.jornalPromedio.huecos ? '; hay meses sin sueldo registrado y no se cuentan' : ''})` : ' (sin registros: se usó el sueldo acordado)'}.</p>
+      <div class="desplaza"><table class="tabla"><thead><tr><th>Concepto</th><th>Gs.</th></tr></thead><tbody>
+      ${r.items.map(i => `<tr><td>${E(i.concepto)}<div class="nota-pie" style="margin:2px 0 0">${E(i.detalle)}</div></td><td class="num">${C.miles(i.monto)}</td></tr>`).join('')}
+      </tbody><tfoot><tr><td>Total a entregar</td><td class="num">${C.miles(Math.max(0, r.total))}</td></tr></tfoot></table></div>
+      ${r.registro.deudaAdelantos > 0 ? `<p class="nota-pie" style="color:var(--sello)">Los adelantos superan lo que se le debe: quedan ${G(r.registro.deudaAdelantos)} sin cubrir.</p>` : ''}`;
+  };
+  ['lSalida', 'lMotivo', 'lDias', 'lPreaviso'].forEach(i => document.getElementById(i).addEventListener('input', calcular));
+  calcular();
+}
+
+// ---------- eventos ----------
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-accion],[data-vista]');
+  if (!b) return;
+  if (b.dataset.vista) { S.vista = b.dataset.vista; render(); window.scrollTo(0, 0); return; }
+  const id = b.dataset.id;
+  const acc = b.dataset.accion;
+  try {
+    if (acc === 'cerrar') cerrar();
+    else if (acc === 'nuevaPersona') formPersona();
+    else if (acc === 'editarPersona') formPersona(persona(id));
+    else if (acc === 'guardarPersona') { b.disabled = true; await guardarPersona(id).finally(() => { b.disabled = false; }); }
+    else if (acc === 'verPersona') { S.vista = 'persona'; S.personaId = id; render(); window.scrollTo(0, 0); }
+    else if (acc === 'pagar') formPago(null, { personaId: id, tipo: 'sueldo' });
+    else if (acc === 'adelanto') formPago(null, { personaId: id, tipo: 'adelanto' });
+    else if (acc === 'nuevoPagoPersona') formPago(null, { personaId: id, tipo: 'extra' });
+    else if (acc === 'nuevoPago') formPago(null, { personaId: S.filtroPersona || '' });
+    else if (acc === 'guardarPago') { b.disabled = true; await guardarPago(id).finally(() => { b.disabled = false; }); }
+    else if (acc === 'verPago') verPago(id);
+    else if (acc === 'editarPago') formPago(S.pagos.find(x => x.id === id));
+    else if (acc === 'anularPago') {
+      const p = S.pagos.find(x => x.id === id);
+      const yaDescontado = p.tipo === 'adelanto' && !p.anulado && C.saldoAdelantos(S.pagos.filter(x => x.id !== p.id), p.personaId) < 0;
+      if (!await preguntar(p.anulado ? '¿Restaurar este pago?' : (yaDescontado ? 'Este adelanto ya se descontó de un sueldo: si lo anulas, el saldo de adelantos quedará negativo. Anula también ese descuento editando el sueldo. ' : '') + '¿Anular este pago? Queda tachado en el registro y deja de contar en los cálculos.', p.anulado ? 'Sí, restaurar' : 'Sí, anular', 'No')) return;
+      await llamar('guardar', 'Pagos', { id, anulado: !p.anulado, _version: version(p) }); cerrar(); avisar(p.anulado ? 'Pago restaurado' : 'Pago anulado');
+    }
+    else if (acc === 'liquidacion') formLiquidacion(id);
+    else if (acc === 'registrarLiquidacion') {
+      if (!hoja.dataset.liquidacion) return;
+      const l = JSON.parse(hoja.dataset.liquidacion);
+      const motivos = { despido: 'despido sin causa', justificado: 'despido con causa', renuncia: 'renuncia', prueba: 'fin del período de prueba' };
+      formPago(null, { personaId: id, tipo: 'liquidacion', fecha: C.hoy(), periodoDesde: l.salida, periodoHasta: l.salida, monto: l.monto, ipsTrabajador: l.ipsTrabajador, adelantoDescontado: l.adelantoDescontado, nota: 'Liquidación final por ' + motivos[l.motivo] + (l.deudaAdelantos ? `; quedan ${C.miles(l.deudaAdelantos)} de adelantos sin cubrir` : '') });
+      hoja.dataset.cerrar = JSON.stringify({ id, salida: l.salida });
+    }
+    else if (acc === 'imprimir') window.print();
+    else if (acc === 'quitarFiltro') { S.filtroPersona = ''; S.filtroMes = ''; render(); }
+  } catch (err) { /* el aviso ya se mostró */ }
+});
+
+document.addEventListener('change', e => {
+  if (e.target.id === 'fPersona') { S.filtroPersona = e.target.value; render(); }
+  if (e.target.id === 'fMes') { S.filtroMes = e.target.value; render(); }
+  if (e.target.id === 'rMes' && e.target.value) { S.mesResumen = e.target.value; render(); }
+});
+
+document.addEventListener('submit', async e => {
+  if (e.target.id === 'fLlave') {
+    e.preventDefault();
+    const v = (document.getElementById('lLlave').value || '').trim();
+    if (!/^[A-Za-z0-9_-]{32,}$/.test(v)) { avisar('Esa llave no tiene el formato correcto.', true); return; }
+    llave = v; try { localStorage.setItem(CLAVE_LLAVE, v); } catch (err) {}
+    S.vista = 'inicio';
+    llamar('cargar').catch(() => {});
+    return;
+  }
+  if (e.target.id !== 'fAjustes') return;
+  e.preventDefault();
+  const f = e.target.elements;
+  const pct = v => Number(String(v).replace(',', '.')) / 100;
+  const cfg = {
+    nombreHogar: f.nombreHogar.value.trim(), salarioMinimo: num(f.salarioMinimo.value), horaTiempoParcial: num(f.horaTiempoParcial.value), smVigencia: f.smVigencia.value, smFuente: f.smFuente.value.trim(),
+    ipsTrabajador: pct(f.ipsTrabajador.value), ipsEmpleador: pct(f.ipsEmpleador.value), ipsComplementoSalud: pct(f.ipsComplementoSalud.value), bonifFamiliar: pct(f.bonifFamiliar.value)
+  };
+  if (!cfg.salarioMinimo || [cfg.ipsTrabajador, cfg.ipsEmpleador, cfg.ipsComplementoSalud, cfg.bonifFamiliar].some(x => isNaN(x) || x < 0 || x > 1)) { avisar('Revisa los valores: hay un número inválido.', true); return; }
+  cfg._version = String(S.config.editadoEn || '');
+  await llamar('guardarConfig', cfg); avisar('Ajustes guardados');
+});
+
+$('#recargar').addEventListener('click', () => llamar('cargar').then(() => avisar('Datos al día')));
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && !hoja.open && S.vista !== 'llave' && (!enLinea || llave)) llamar('cargar').catch(() => {}); });
+
+// ---------- modo demostración (fuera de Google) ----------
+const Demo = (() => {
+  const CLAVE = 'pagosHogarDemo';
+  const cfg = { nombreHogar: 'Familia Ejemplo', salarioMinimo: 3044000, horaTiempoParcial: 14635, smVigencia: '2026-07-01', smFuente: 'Decreto 6225/2026 y Resolución MTESS 670/2026, según la prensa. Confirmar en mtess.gov.py', ipsTrabajador: 0.09, ipsEmpleador: 0.165, ipsComplementoSalud: 0.09, bonifFamiliar: 0.05 };
+  function semilla() {
+    const pers = [
+      { id: 'd1', nombre: 'Rosa Benítez', funcion: 'Niñera', documento: '', fechaIngreso: '2024-03-04', controlDesde: '2026-09-01', modalidad: 'con retiro', jornada: 'completa', horasSemana: 48, sueldoMensual: 3200000, frecuencia: 'quincenal', ips: true, hijosMenores: 1, activo: true, fechaSalida: '', notas: '', vacacionesIniciales: 12 },
+      { id: 'd2', nombre: 'Julio Acosta', funcion: 'Jardinero', documento: '', fechaIngreso: '2025-08-01', controlDesde: '2026-09-01', modalidad: 'con retiro', jornada: 'parcial', horasSemana: 16, sueldoMensual: 950000, frecuencia: 'mensual', ips: false, hijosMenores: 0, activo: true, fechaSalida: '', notas: '', vacacionesIniciales: 12 }
+    ];
+    const pg = [];
+    let n = 0;
+    const add = o => pg.push(Object.assign({ id: 'p' + (++n), anulado: false, medio: 'Efectivo', nota: '', dias: 0, ipsTrabajador: 0, adelantoDescontado: 0, creadoPor: 'demo@ejemplo', creadoEn: '2026-01-01T00:00:' + String(n).padStart(2, '0') }, o, { neto: o.monto - (o.ipsTrabajador || 0) - (o.adelantoDescontado || 0) }));
+    [['2026-09-01', '2026-09-15'], ['2026-09-16', '2026-09-30'], ['2026-10-01', '2026-10-15']].forEach(([a, b]) =>
+      add({ personaId: 'd1', tipo: 'sueldo', fecha: b, periodoDesde: a, periodoHasta: b, monto: 1600000, ipsTrabajador: 144000 }));
+    add({ personaId: 'd1', tipo: 'adelanto', fecha: '2026-10-22', periodoDesde: '2026-10-22', periodoHasta: '2026-10-22', monto: 300000 });
+    add({ personaId: 'd2', tipo: 'sueldo', fecha: '2026-10-03', periodoDesde: '2026-09-01', periodoHasta: '2026-09-30', monto: 950000 });
+    add({ personaId: 'd2', tipo: 'sueldo', fecha: '2026-11-04', periodoDesde: '2026-10-01', periodoHasta: '2026-10-31', monto: 950000, medio: 'Transferencia' });
+    return { personas: pers, pagos: pg, config: cfg };
+  }
+  const leer = () => { try { const t = localStorage.getItem(CLAVE); if (t) return JSON.parse(t); } catch (e) {} return semilla(); };
+  const escribir = d => { try { localStorage.setItem(CLAVE, JSON.stringify(d)); } catch (e) {} };
+  let datos = leer();
+  const salida = () => JSON.parse(JSON.stringify(Object.assign({}, datos, { usuario: 'modo demostración', url: '' })));
+  return {
+    cargar: () => salida(),
+    guardar(hojaNombre, o) {
+      o = Object.assign({}, o); delete o.nuevo; delete o._version; delete o._forzar;
+      const lista = hojaNombre === 'Personas' ? datos.personas : datos.pagos;
+      const i = o.id ? lista.findIndex(x => x.id === o.id) : -1;
+      const ahora = new Date().toISOString();
+      if (i >= 0) lista[i] = Object.assign({}, lista[i], o, { editadoPor: 'demo@ejemplo', editadoEn: ahora });
+      else lista.push(Object.assign({}, o, { creadoPor: 'demo@ejemplo', creadoEn: ahora }));
+      escribir(datos); return salida();
+    },
+    guardarConfig(c) { c = Object.assign({}, c); delete c._version; datos.config = Object.assign({}, datos.config, c); escribir(datos); return salida(); }
+  };
+})();
+
+if (!enLinea) $('#demo').hidden = false;
+if (enLinea && !llave) { S.vista = 'llave'; render(); }
+else { render(); llamar('cargar').catch(() => {}); }
+})();
+</script>
+</body>
+</html>
