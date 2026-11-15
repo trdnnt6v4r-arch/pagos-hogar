@@ -725,12 +725,18 @@ const S = { personas: [], pagos: [], config: {}, usuario: '', url: '', vista: 'i
 const API_URL = window.API_URL || '';
 const enLinea = !!API_URL;
 const CLAVE_LLAVE = 'pagosHogarLlave';
+// En el iPhone, la app agregada a la pantalla de inicio guarda sus datos aparte de Safari:
+// por eso en Safari el enlace conserva la llave (así viaja al ícono) y dentro de la app instalada se borra de la barra.
+const instalada = window.navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
 function leerLlave() {
   const m = location.hash.match(/llave=([A-Za-z0-9_-]{32,})/);
+  let v = m ? m[1] : '';
   try {
     if (m) localStorage.setItem(CLAVE_LLAVE, m[1]);
-    return localStorage.getItem(CLAVE_LLAVE) || (m ? m[1] : '');
-  } catch (e) { return m ? m[1] : ''; }
+    v = localStorage.getItem(CLAVE_LLAVE) || v;
+  } catch (e) { /* sin almacenamiento: se usa la del enlace */ }
+  if (m && instalada && history.replaceState) history.replaceState(null, '', location.pathname + location.search);
+  return v;
 }
 let llave = leerLlave();
 async function api(fn, ...args) {
@@ -766,10 +772,10 @@ async function llamar(fn, ...args) {
 }
 
 let tAviso;
-function avisar(texto, error) {
+function avisar(texto, error, ms) {
   const a = $('#aviso');
   a.textContent = texto; a.className = 'on' + (error ? ' error' : '');
-  clearTimeout(tAviso); tAviso = setTimeout(() => { a.className = ''; }, error ? 6000 : 2600);
+  clearTimeout(tAviso); tAviso = setTimeout(() => { a.className = ''; }, ms || (error ? 6000 : 2600));
 }
 
 const persona = id => S.personas.find(p => p.id === id);
@@ -1450,6 +1456,9 @@ const Demo = (() => {
 })();
 
 if (!enLinea) $('#demo').hidden = false;
+if (enLinea && llave && !instalada && /iPhone|iPad/.test(navigator.userAgent) && /llave=/.test(location.hash)) {
+  setTimeout(() => avisar('Para instalarla: Compartir → Agregar a pantalla de inicio. Después borra el mensaje con el enlace.', false, 10000), 1500);
+}
 if (enLinea && !llave) { S.vista = 'llave'; render(); }
 else { render(); llamar('cargar').catch(() => {}); }
 })();
