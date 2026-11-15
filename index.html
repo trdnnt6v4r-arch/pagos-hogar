@@ -782,7 +782,7 @@ function render() {
   $('#titulo').textContent = 'Pagos del hogar';
   $('#hogar').textContent = S.config.nombreHogar ? 'Libro de ' + S.config.nombreHogar : '';
   $('#usuario').textContent = S.usuario ? '· ' + S.usuario : '';
-  $('#yo').textContent = (S.usuario && S.usuario.includes('@') ? S.usuario : (S.config.nombreHogar || 'P')).slice(0, 1).toUpperCase();
+  $('#yo').textContent = (S.usuario && !/^(modo|sin )/.test(S.usuario) ? S.usuario : (S.config.nombreHogar || 'P')).slice(0, 1).toUpperCase();
   $('#yo').title = S.usuario || '';
   document.querySelectorAll('.pestanas button').forEach(b => {
     const activa = b.dataset.vista === S.vista || (S.vista === 'persona' && b.dataset.vista === 'personas');
