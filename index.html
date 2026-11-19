@@ -1218,6 +1218,8 @@ function formPago(pago, inicial) {
   }
   $('#gPersona').addEventListener('change', sugerir);
   $('#gTipo').addEventListener('change', sugerir);
+  // La propuesta de período depende de la fecha de pago: se recalcula al cambiarla (solo en pagos nuevos).
+  $('#gFecha').addEventListener('change', () => { if (nuevo && !(inicial && inicial.monto)) sugerir(); });
   $('#gMonto').addEventListener('input', () => {
     const p = persona(val('gPersona'));
     $('#gIps').value = C.miles(ipsDe(p, val('gTipo'), num(val('gMonto'))));
@@ -1250,6 +1252,10 @@ async function guardarPago(id) {
   else if (o.neto < 0) err = 'Los descuentos superan el monto.';
   if (err) { $('#gError').textContent = err; return; }
   if (tipo === 'sueldo') {
+    // Una fecha de pago muy lejos del período suele ser un error de carga (p. ej. sueldo de marzo con fecha de enero).
+    if (o.fecha < o.periodoDesde || C.diasEntre(o.periodoHasta, o.fecha) > 62) {
+      if (!await preguntar(`La fecha de pago (${C.fechaCorta(o.fecha, true)}) no coincide con el período del ${C.etiquetaPeriodo(o.periodoDesde, o.periodoHasta)}. ¿Guardar igual?`, 'Sí, guardar', 'Revisar')) return;
+    }
     const choca = otros.find(x => !x.anulado && x.tipo === 'sueldo' && x.personaId === o.personaId && x.periodoDesde <= o.periodoHasta && x.periodoHasta >= o.periodoDesde);
     if (choca) {
       if (!await preguntar(`Ya hay un sueldo registrado para el ${C.etiquetaPeriodo(choca.periodoDesde, choca.periodoHasta)}. ¿Registrar este también?`, 'Sí, registrar', 'No')) return;
